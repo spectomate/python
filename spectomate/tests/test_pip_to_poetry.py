@@ -1,5 +1,5 @@
 """
-Testy dla konwertera z formatu pip do formatu conda.
+Testy dla konwertera z formatu pip do formatu poetry.
 """
 
 import os
@@ -7,16 +7,16 @@ import tempfile
 from pathlib import Path
 
 import pytest
-import yaml
+import toml
 
-from spectomate.converters.pip_to_conda import PipToCondaConverter
+from spectomate.converters.pip_to_poetry import PipToPoetryConverter
 from spectomate.schemas.pip_schema import PipSchema
-from spectomate.schemas.conda_schema import CondaSchema
+from spectomate.schemas.poetry_schema import PoetrySchema
 
 
-class TestPipToCondaConverter:
+class TestPipToPoetryConverter:
     """
-    Testy dla konwertera z formatu pip do formatu conda.
+    Testy dla konwertera z formatu pip do formatu poetry.
     """
     
     def setup_method(self):
@@ -39,7 +39,7 @@ class TestPipToCondaConverter:
             ]))
         
         # Ścieżka do pliku wyjściowego
-        self.output_file = self.temp_path / "environment.yml"
+        self.output_file = self.temp_path / "pyproject.toml"
     
     def teardown_method(self):
         """Czyszczenie po testach."""
@@ -47,7 +47,7 @@ class TestPipToCondaConverter:
     
     def test_read_source(self):
         """Test odczytu pliku requirements.txt."""
-        converter = PipToCondaConverter(source_file=self.requirements_file)
+        converter = PipToPoetryConverter(source_file=self.requirements_file)
         source_data = converter.read_source()
         
         assert "dependencies" in source_data
@@ -59,35 +59,38 @@ class TestPipToCondaConverter:
         assert "pyyaml>=6.0" in source_data["dependencies"]
     
     def test_convert(self):
-        """Test konwersji danych z formatu pip do formatu conda."""
-        converter = PipToCondaConverter(
+        """Test konwersji danych z formatu pip do formatu poetry."""
+        converter = PipToPoetryConverter(
             source_file=self.requirements_file,
-            options={"env_name": "testenv"}
+            options={"project_name": "testproject", "version": "1.0.0"}
         )
         
         source_data = converter.read_source()
         target_data = converter.convert(source_data)
         
-        assert target_data["name"] == "testenv"
-        assert "channels" in target_data
-        assert "defaults" in target_data["channels"]
-        assert "conda-forge" in target_data["channels"]
+        assert target_data["name"] == "testproject"
+        assert target_data["version"] == "1.0.0"
         assert "dependencies" in target_data
         
         # Sprawdzamy, czy wszystkie zależności zostały uwzględnione
-        # Uwaga: w prawdziwym teście powinniśmy mockować funkcję check_package_in_conda
-        all_deps = target_data["dependencies"]
-        if "pip" in target_data:
-            all_deps.extend(target_data["pip"])
-        
-        assert len(all_deps) > 0
+        deps = target_data["dependencies"]
+        assert "numpy" in deps
+        assert deps["numpy"] == "==1.22.0"
+        assert "pandas" in deps
+        assert deps["pandas"] == ">=1.4.0"
+        assert "matplotlib" in deps
+        assert deps["matplotlib"] == ">=3.5.0"
+        assert "requests" in deps
+        assert deps["requests"] == ">=2.27.0"
+        assert "pyyaml" in deps
+        assert deps["pyyaml"] == ">=6.0"
     
     def test_write_target(self):
-        """Test zapisu danych do pliku environment.yml."""
-        converter = PipToCondaConverter(
+        """Test zapisu danych do pliku pyproject.toml."""
+        converter = PipToPoetryConverter(
             source_file=self.requirements_file,
             target_file=self.output_file,
-            options={"env_name": "testenv"}
+            options={"project_name": "testproject", "version": "1.0.0"}
         )
         
         source_data = converter.read_source()
@@ -97,20 +100,37 @@ class TestPipToCondaConverter:
         assert result_path == self.output_file
         assert self.output_file.exists()
         
-        # Sprawdzamy, czy plik można odczytać jako poprawny YAML
+        # Sprawdzamy, czy plik można odczytać jako poprawny TOML
         with open(self.output_file, "r") as f:
-            conda_env = yaml.safe_load(f)
+            pyproject_data = toml.load(f)
         
-        assert conda_env["name"] == "testenv"
-        assert "channels" in conda_env
-        assert "dependencies" in conda_env
+        assert "tool" in pyproject_data
+        assert "poetry" in pyproject_data["tool"]
+        poetry_data = pyproject_data["tool"]["poetry"]
+        
+        assert poetry_data["name"] == "testproject"
+        assert poetry_data["version"] == "1.0.0"
+        assert "dependencies" in poetry_data
+        
+        # Sprawdzamy, czy wszystkie zależności są w pliku
+        deps = poetry_data["dependencies"]
+        assert "numpy" in deps
+        assert deps["numpy"] == "==1.22.0"
+        assert "pandas" in deps
+        assert deps["pandas"] == ">=1.4.0"
+        assert "matplotlib" in deps
+        assert deps["matplotlib"] == ">=3.5.0"
+        assert "requests" in deps
+        assert deps["requests"] == ">=2.27.0"
+        assert "pyyaml" in deps
+        assert deps["pyyaml"] == ">=6.0"
     
     def test_execute(self):
         """Test pełnego procesu konwersji."""
-        converter = PipToCondaConverter(
+        converter = PipToPoetryConverter(
             source_file=self.requirements_file,
             target_file=self.output_file,
-            options={"env_name": "testenv"}
+            options={"project_name": "testproject", "version": "1.0.0"}
         )
         
         result_path = converter.execute()
@@ -118,13 +138,17 @@ class TestPipToCondaConverter:
         assert result_path == self.output_file
         assert self.output_file.exists()
         
-        # Sprawdzamy, czy plik można odczytać jako poprawny YAML
+        # Sprawdzamy, czy plik można odczytać jako poprawny TOML
         with open(self.output_file, "r") as f:
-            conda_env = yaml.safe_load(f)
+            pyproject_data = toml.load(f)
         
-        assert conda_env["name"] == "testenv"
-        assert "channels" in conda_env
-        assert "dependencies" in conda_env
+        assert "tool" in pyproject_data
+        assert "poetry" in pyproject_data["tool"]
+        poetry_data = pyproject_data["tool"]["poetry"]
+        
+        assert poetry_data["name"] == "testproject"
+        assert poetry_data["version"] == "1.0.0"
+        assert "dependencies" in poetry_data
 
 
 if __name__ == "__main__":

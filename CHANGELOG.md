@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2025-05-04
+
+### Added
+- Changes in examples/cli_example.sh
+- Changes in examples/conda_to_pip_example.py
+- Changes in examples/pip_to_conda_example.py
+- Changes in examples/pip_to_poetry_example.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+
+### Changed
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+
 ## [0.1.2] - 2025-05-04
 
 ### Added
