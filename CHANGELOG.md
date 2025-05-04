@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2025-05-04
+
+### Added
+- Changes in pyproject.toml
+- Changes in requirements.txt
+- Changes in spectomate/__init__.py
+- Changes in spectomate/_version.py
+- Changes in spectomate/cli.py
+- Changes in spectomate/converters/__init__.py
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/external_converters.py
+- Changes in spectomate/converters/pip_to_conda.py
+- Changes in spectomate/converters/pip_to_pdm.py
+- Changes in spectomate/converters/pip_to_pipenv.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/converters/poetry_to_conda.py
+- Changes in spectomate/converters/poetry_to_pip.py
+- Changes in spectomate/core/__init__.py
+- Changes in spectomate/core/base_converter.py
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+- Changes in spectomate/schemas/__init__.py
+- Changes in spectomate/schemas/conda_schema.py
+- Changes in spectomate/schemas/pip_schema.py
+- Changes in spectomate/schemas/pipenv_schema.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/__init__.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_poetry_to_pip.py
+- Changes in src.md
+
 ## [0.1.1] - 2025-05-04
 
 ### Added
