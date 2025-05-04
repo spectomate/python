@@ -37,10 +37,6 @@ fi
 echo -e "\nChanges to be published:"
 cat "$TEMP_FILE"
 
-# Confirm with user
-#read -p "Continue with publish? (y/n) " -n 1 -r
-
-
 # Check if we're in a git repository
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
     echo "Error: Not a git repository"
@@ -48,13 +44,29 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Add all changes
-git add .
-
-# Create commit with changelog entry
-git commit -m "Release version $VERSION
+# Check if git status is clean
+echo "Check if we're in a clean git state"
+if [[ -n $(git status --porcelain) ]]; then
+    echo "Working directory is not clean. Committing changes..."
+    # Add all changes
+    git add .
+    
+    # Create commit with changelog entry
+    git commit -m "Release version $VERSION
 
 $(cat "$TEMP_FILE")"
+fi
+
+# Pobierz najnowsze zmiany z repozytorium zdalnego
+echo "Pobieranie zmian z repozytorium zdalnego..."
+git pull origin main || { echo "Nie udało się pobrać zmian. Kontynuowanie..."; }
+
+# Sprawdź, czy tag już istnieje
+if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+    echo "Tag v$VERSION już istnieje. Usuwanie istniejącego tagu..."
+    git tag -d "v$VERSION"
+    git push origin --delete "v$VERSION" || true
+fi
 
 # Create and push tag
 git tag -a "v$VERSION" -m "Version $VERSION
@@ -63,7 +75,11 @@ $(cat "$TEMP_FILE")"
 
 # Push changes and tags
 echo "Pushing changes and tags to GitHub..."
-git push origin main
+git push origin main || { 
+    echo "Nie udało się wypchnąć zmian. Próba ponowna po pobraniu zmian..."
+    git pull origin main
+    git push origin main || { echo "Nie udało się wypchnąć zmian po synchronizacji. Przerywanie."; exit 1; }
+}
 git push origin "v$VERSION"
 
 # Cleanup
