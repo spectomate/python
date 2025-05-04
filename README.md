@@ -1,125 +1,116 @@
 # Spectomate
 
-Spectomate to narzędzie do konwersji projektów między różnymi formatami zarządzania pakietami w Pythonie (pip, conda, poetry).
+Spectomate is a tool for converting projects between different Python package management formats (pip, conda, poetry).
 
-## Kluczowe cechy Spectomate:
+## Key Features of Spectomate:
 
-1. **Modułowa architektura** - każdy konwerter jest oddzielnym modułem implementującym wspólny interfejs
-2. **Wsparcie dla istniejących narzędzi** - możliwość integracji z zewnętrznymi narzędziami konwersji
-3. **Elastyczny system rozszerzeń** - łatwe dodawanie nowych konwerterów bez modyfikacji kodu bazowego
-4. **Kompleksowe wsparcie formatów**:
+1. **Modular architecture** - each converter is a separate module implementing a common interface
+2. **Support for existing tools** - ability to integrate with external conversion tools
+3. **Flexible extension system** - easy addition of new converters without modifying the base code
+4. **Comprehensive format support**:
    - pip (requirements.txt)
    - conda (environment.yml)
    - poetry (pyproject.toml)
 
-## Instalacja
+## Installation
 
 ```bash
-# Instalacja podstawowa
+# Basic installation
 pip install spectomate
 ```
 
-## Jak używać Spectomate:
+## How to Use Spectomate:
 
-### Interfejs wiersza poleceń (CLI)
+### Command Line Interface (CLI)
 
 ```bash
-# Wyświetlenie dostępnych konwerterów
+# Display available converters
 spectomate --list
 
-# Konwersja z pip do conda
+# Convert from pip to conda
 spectomate -s pip -t conda -i requirements.txt -o environment.yml --env-name myproject
 
-# Konwersja z conda do pip
+# Convert from conda to pip
 spectomate -s conda -t pip -i environment.yml -o requirements.txt
 
-# Konwersja z pip do poetry
-spectomate -s pip -t poetry -i requirements.txt -o pyproject.toml --project-name "mój-projekt" --version "0.1.0"
+# Convert from pip to poetry
+spectomate -s pip -t poetry -i requirements.txt -o pyproject.toml --project-name "my-project" --version "0.1.0"
 ```
 
-### Użycie programistyczne
+### Programmatic Usage
 
 ```python
 from spectomate.converters.pip_to_conda import PipToCondaConverter
 
-# Konwersja z pip do conda
+# Convert from pip to conda
 converter = PipToCondaConverter(
     source_file="requirements.txt",
     target_file="environment.yml",
     options={"env_name": "myproject"}
 )
 result_path = converter.execute()
-print(f"Plik wyjściowy: {result_path}")
+print(f"Output file: {result_path}")
 ```
 
-## Struktura projektu
+## Project Structure
 
 ```
 spectomate/
-├── __init__.py
-├── cli.py
-├── core/
+├── __init__.py                  # Package initialization
+├── cli.py                       # Command line interface
+├── core/                        # Core components
 │   ├── __init__.py
-│   ├── base_converter.py
-│   ├── registry.py
-│   └── utils.py
-├── converters/
+│   ├── base_converter.py        # Base class for converters
+│   ├── registry.py              # Converter registration system
+│   └── utils.py                 # Helper functions
+├── converters/                  # Converter implementations
 │   ├── __init__.py
-│   ├── pip_to_conda.py
-│   ├── pip_to_poetry.py
-│   ├── conda_to_pip.py
+│   ├── conda_to_pip.py          # Converter from conda to pip
+│   ├── pip_to_conda.py          # Converter from pip to conda
+│   ├── pip_to_poetry.py         # Converter from pip to poetry
 │   └── ...
-├── schemas/
-│   ├── __init__.py
-│   ├── pip_schema.py
-│   ├── conda_schema.py
-│   ├── poetry_schema.py
-│   └── ...
-└── tests/
+└── schemas/                     # Data schemas for formats
     ├── __init__.py
-    ├── test_pip_to_conda.py
-    ├── test_conda_to_pip.py
+    ├── conda_schema.py          # Schema for conda format
+    ├── pip_schema.py            # Schema for pip format
+    ├── poetry_schema.py         # Schema for poetry format
     └── ...
 ```
 
-## Rozszerzalność
+## Documentation
 
-Spectomate pozwala na łatwe dodawanie nowych konwerterów przez:
-1. Utworzenie nowego modułu w katalogu `converters/`
-2. Implementację klasy dziedziczącej po `BaseConverter`
-3. Implementację metod `read_source`, `convert` i `write_target`
-4. Rejestrację konwertera w `ConverterRegistry`
+Detailed documentation is available in the `docs/` directory:
 
-## Rozwój projektu
+- [Architecture](docs/ARCHITECTURE.md) - description of the system architecture
+- [Converters](docs/CONVERTERS.md) - description of available converters and their implementation
+- [Schemas](docs/SCHEMAS.md) - description of data schemas for different formats
 
-### Wymagania dla deweloperów
+### Diagrams
 
-```bash
-# Klonowanie repozytorium
-git clone https://github.com/spectomate/python.git
-cd python
+Visual documentation in the form of Mermaid diagrams:
 
-# Instalacja w trybie deweloperskim
-pip install -e .
-```
+- [Architecture Diagram](docs/diagrams/ARCHITECTURE_DIAGRAM.md) - class structure and relationships between components
+- [Data Flow Diagram](docs/diagrams/DATA_FLOW_DIAGRAM.md) - data flow during the conversion process
+- [Sequence Diagram](docs/diagrams/SEQUENCE_DIAGRAM.md) - interactions between components during conversion
+- [Extension Diagram](docs/diagrams/EXTENSION_DIAGRAM.md) - process of adding new converters and formats
 
-### Aktualizacja wersji i publikacja
+*Note: Polish documentation is available in the [docs/pl/](docs/pl/) directory.*
 
-Projekt wykorzystuje skrypty w katalogu `update/` do zarządzania wersjami i publikacji:
+## Extending Spectomate
 
-```bash
-# Aktualizacja wersji i publikacja
-bash update/version.sh
-```
+Spectomate is designed as a modular system that can be easily extended with new formats and converters. To add a new converter:
 
-Skrypt wykonuje następujące operacje:
-1. Aktualizuje numer wersji w plikach źródłowych
-2. Generuje wpis w CHANGELOG.md
-3. Publikuje zmiany na GitHub
-4. Publikuje pakiet na PyPI
+1. Create a new converter class inheriting from `BaseConverter`
+2. Implement the required abstract methods:
+   - `get_source_format()` - returns the source format identifier
+   - `get_target_format()` - returns the target format identifier
+   - `read_source()` - reads the source file
+   - `convert()` - converts the data
+   - `write_target()` - writes the data to the target file
+3. Register the converter using the `@register_converter` decorator
 
-Więcej informacji na temat procesu publikacji znajduje się w [update/README.md](update/README.md).
+Detailed information on creating custom converters can be found in the [converters documentation](docs/CONVERTERS.md).
 
-## Licencja
+## License
 
-Ten projekt jest udostępniany na licencji MIT. Szczegółowe informacje znajdują się w pliku LICENSE.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

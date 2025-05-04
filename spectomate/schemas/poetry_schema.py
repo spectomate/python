@@ -215,51 +215,72 @@ class PoetrySchema:
             "format": "poetry"
         }
         
+        # Pobieramy zależności - obsługujemy zarówno klucz "dependencies" jak i "requirements"
+        dependencies = pip_data.get("requirements", pip_data.get("dependencies", []))
+        
         # Konwertujemy zależności
-        for dep in pip_data.get("dependencies", []):
-            # Pomijamy komentarze
-            if dep.startswith("#"):
-                continue
-                
-            # Parsujemy zależność
-            if "==" in dep:
-                name, version = dep.split("==", 1)
-                poetry_data["dependencies"][name.strip()] = f"=={version.strip()}"
-            elif ">=" in dep:
-                name, version = dep.split(">=", 1)
-                poetry_data["dependencies"][name.strip()] = f">={version.strip()}"
-            elif "<=" in dep:
-                name, version = dep.split("<=", 1)
-                poetry_data["dependencies"][name.strip()] = f"<={version.strip()}"
-            elif ">" in dep:
-                name, version = dep.split(">", 1)
-                poetry_data["dependencies"][name.strip()] = f">{version.strip()}"
-            elif "<" in dep:
-                name, version = dep.split("<", 1)
-                poetry_data["dependencies"][name.strip()] = f"<{version.strip()}"
-            elif "~=" in dep:
-                name, version = dep.split("~=", 1)
-                poetry_data["dependencies"][name.strip()] = f"~{version.strip()}"
-            elif "@" in dep:
-                # URL dependency
-                name, url = dep.split("@", 1)
-                poetry_data["dependencies"][name.strip()] = {"url": url.strip()}
-            elif dep.startswith("git+"):
-                # Git dependency
-                url = dep[4:]
-                if "#egg=" in url:
-                    url, egg = url.split("#egg=", 1)
-                    name = egg.strip()
-                    if "@" in url:
-                        url, rev = url.split("@", 1)
-                        poetry_data["dependencies"][name] = {"git": url, "rev": rev}
+        for dep in dependencies:
+            # Obsługa przypadku, gdy dep jest słownikiem (rozszerzony format zależności)
+            if isinstance(dep, dict):
+                if dep.get("type") == "package":
+                    package_name = dep["name"]
+                    
+                    # Sprawdzamy, czy jest specyfikacja wersji
+                    if "version_spec" in dep:
+                        operator = dep["version_spec"]["operator"]
+                        version_val = dep["version_spec"]["version"]
+                        poetry_data["dependencies"][package_name] = f"{operator}{version_val}"
                     else:
-                        poetry_data["dependencies"][name] = {"git": url}
+                        poetry_data["dependencies"][package_name] = "*"
+                
+                # Pomijamy komentarze i opcje
+                continue
+            
+            # Obsługa przypadku, gdy dep jest stringiem (prosty format zależności)
+            # Pomijamy komentarze
+            if isinstance(dep, str):
+                if dep.startswith("#"):
+                    continue
+                    
+                # Parsujemy zależność
+                if "==" in dep:
+                    name, version_val = dep.split("==", 1)
+                    poetry_data["dependencies"][name.strip()] = f"=={version_val.strip()}"
+                elif ">=" in dep:
+                    name, version_val = dep.split(">=", 1)
+                    poetry_data["dependencies"][name.strip()] = f">={version_val.strip()}"
+                elif "<=" in dep:
+                    name, version_val = dep.split("<=", 1)
+                    poetry_data["dependencies"][name.strip()] = f"<={version_val.strip()}"
+                elif ">" in dep:
+                    name, version_val = dep.split(">", 1)
+                    poetry_data["dependencies"][name.strip()] = f">{version_val.strip()}"
+                elif "<" in dep:
+                    name, version_val = dep.split("<", 1)
+                    poetry_data["dependencies"][name.strip()] = f"<{version_val.strip()}"
+                elif "~=" in dep:
+                    name, version_val = dep.split("~=", 1)
+                    poetry_data["dependencies"][name.strip()] = f"~{version_val.strip()}"
+                elif "@" in dep:
+                    # URL dependency
+                    name, url = dep.split("@", 1)
+                    poetry_data["dependencies"][name.strip()] = {"url": url.strip()}
+                elif dep.startswith("git+"):
+                    # Git dependency
+                    url = dep[4:]
+                    if "#egg=" in url:
+                        url, egg = url.split("#egg=", 1)
+                        name = egg.strip()
+                        if "@" in url:
+                            url, rev = url.split("@", 1)
+                            poetry_data["dependencies"][name] = {"git": url, "rev": rev}
+                        else:
+                            poetry_data["dependencies"][name] = {"git": url}
+                    else:
+                        # Nieznany format git, dodajemy jako string
+                        poetry_data["dependencies"][dep] = "*"
                 else:
-                    # Nieznany format git, dodajemy jako string
-                    poetry_data["dependencies"][dep] = "*"
-            else:
-                # Prosta zależność bez wersji
-                poetry_data["dependencies"][dep.strip()] = "*"
+                    # Prosta zależność bez wersji
+                    poetry_data["dependencies"][dep.strip()] = "*"
         
         return poetry_data

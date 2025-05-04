@@ -2,9 +2,22 @@
 import subprocess
 import os
 import re
+import sys
 from datetime import datetime
 from typing import List, Optional, Tuple, Dict
 
+# Add path to the update directory to import modules
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from env_manager import get_project_name, get_package_path, get_project_root
+except ImportError:
+    print("Cannot import env_manager module. Using default values.")
+    def get_project_name():
+        return "twinizer"
+    def get_package_path():
+        return "twinizer"
+    def get_project_root():
+        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def get_version_from_changelog(file_path="CHANGELOG.md"):
     """Extract the most recent version from the changelog file."""
@@ -88,6 +101,7 @@ class ChangelogGenerator:
         version = get_version_from_changelog() or "0.1.0"
         # print(version)
         self.version: str = version
+        self.project_name = get_project_name()
         self.changes: Dict[str, List[str]] = {
             "Added": [],
             "Changed": [],
@@ -248,16 +262,21 @@ class ChangelogGenerator:
 
 
 def main():
+    """Main function to update the changelog."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate and update CHANGELOG.md")
+    parser.add_argument("--staged", action="store_true", help="Include only staged changes")
+    parser.add_argument("--increment", choices=["major", "minor", "patch"], default="patch",
+                        help="Increment version (major, minor, patch)")
+    parser.add_argument("--output", default="CHANGELOG.md", help="Output file path")
+    args = parser.parse_args()
+
+    project_name = get_project_name()
+    print(f"Updating CHANGELOG.md for project {project_name}...")
     generator = ChangelogGenerator()
-
-    # Check for command-line arguments to determine increment type
-    import sys
-    increment_type = "patch"  # Default increment
-    if len(sys.argv) > 1:
-        increment_type = sys.argv[1]  # Use provided increment type
-
-    generator.update_changelog_file(staged=True, increment_type=increment_type)
-    print(f"Updated changelog to version {generator.version}")
+    generator.update_changelog_file(output_file=args.output, staged=args.staged, increment_type=args.increment)
+    print(f"CHANGELOG.md updated to version {generator.version}")
 
 
 if __name__ == "__main__":

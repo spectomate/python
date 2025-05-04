@@ -35,10 +35,16 @@ class CondaToPipConverter(BaseConverter):
         # Ustawiamy domyślne opcje
         if self.options is None:
             self.options = {}
-        
-        # Ustawiamy domyślne formaty
-        self.source_format = "conda"
-        self.target_format = "pip"
+    
+    @staticmethod
+    def get_source_format() -> str:
+        """Zwraca identyfikator formatu źródłowego."""
+        return "conda"
+    
+    @staticmethod
+    def get_target_format() -> str:
+        """Zwraca identyfikator formatu docelowego."""
+        return "pip"
     
     def read_source(self) -> Dict[str, Any]:
         """
@@ -62,14 +68,10 @@ class CondaToPipConverter(BaseConverter):
         Returns:
             Dane w formacie pip
         """
-        # Sprawdzamy, czy dane są w odpowiednim formacie
-        if source_data.get("format") != "conda":
-            raise ValueError("Dane źródłowe nie są w formacie conda")
-        
-        # Tworzymy słownik z danymi w formacie pip
+        # Inicjalizujemy dane wyjściowe
         target_data = {
             "format": "pip",
-            "dependencies": []
+            "requirements": []  # Używamy klucza "requirements" zamiast "dependencies"
         }
         
         # Pobieramy zależności conda
@@ -85,13 +87,13 @@ class CondaToPipConverter(BaseConverter):
                 _, dep = dep.split("::", 1)
             
             # Dodajemy zależność do listy
-            target_data["dependencies"].append(dep)
+            target_data["requirements"].append(dep)
         
         # Dodajemy zależności pip
-        target_data["dependencies"].extend(pip_deps)
+        target_data["requirements"].extend(pip_deps)
         
         # Sortujemy zależności
-        target_data["dependencies"].sort()
+        target_data["requirements"].sort()
         
         return target_data
     

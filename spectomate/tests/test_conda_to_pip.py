@@ -80,10 +80,10 @@ class TestCondaToPipConverter:
         target_data = converter.convert(source_data)
         
         assert target_data["format"] == "pip"
-        assert "dependencies" in target_data
+        assert "requirements" in target_data
         
         # Sprawdzamy, czy wszystkie zależności zostały uwzględnione
-        deps = target_data["dependencies"]
+        deps = target_data["requirements"]
         assert len(deps) > 0
         
         # Sprawdzamy, czy zależności conda zostały przekonwertowane

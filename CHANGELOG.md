@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2025-05-04
+
+### Added
+- Changes in README.md
+- Changes in docs/ARCHITECTURE.md
+- Changes in docs/CONVERTERS.md
+- Changes in docs/SCHEMAS.md
+- Changes in docs/diagrams/ARCHITECTURE_DIAGRAM.md
+- Changes in docs/diagrams/DATA_FLOW_DIAGRAM.md
+- Changes in docs/diagrams/EXTENSION_DIAGRAM.md
+- Changes in docs/diagrams/README.md
+- Changes in docs/diagrams/SEQUENCE_DIAGRAM.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
+### Changed
+- Changes in examples/conda_to_pip_example.py
+- Changes in examples/pip_to_conda_example.py
+- Changes in examples/pip_to_poetry_example.py
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+- Changes in spectomate/_version.py
+- Changes in spectomate/_version.py.bak
+- Changes in spectomate/cli.py
+
 ## [0.1.4] - 2025-05-04
 
 ## [0.1.3] - 2025-05-04

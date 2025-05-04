@@ -36,10 +36,16 @@ class PipToPoetryConverter(BaseConverter):
         # Ustawiamy domyślne opcje
         if self.options is None:
             self.options = {}
-        
-        # Ustawiamy domyślne formaty
-        self.source_format = "pip"
-        self.target_format = "poetry"
+    
+    @staticmethod
+    def get_source_format() -> str:
+        """Zwraca identyfikator formatu źródłowego."""
+        return "pip"
+    
+    @staticmethod
+    def get_target_format() -> str:
+        """Zwraca identyfikator formatu docelowego."""
+        return "poetry"
     
     def read_source(self) -> Dict[str, Any]:
         """
@@ -51,7 +57,24 @@ class PipToPoetryConverter(BaseConverter):
         if self.source_file is None:
             raise ValueError("Nie podano ścieżki do pliku źródłowego")
         
-        return PipSchema.parse_file(self.source_file)
+        data = PipSchema.parse_file(self.source_file)
+        
+        # Filtrujemy tylko rzeczywiste zależności (pakiety) i pomijamy komentarze i opcje
+        if "requirements" in data:
+            package_deps = [dep for dep in data["requirements"] if isinstance(dep, dict) and dep.get("type") == "package"]
+            
+            # Konwertujemy słowniki pakietów na stringi dla testów
+            dependencies = []
+            for dep in package_deps:
+                if "version_spec" in dep:
+                    dependencies.append(f"{dep['name']}{dep['version_spec']['operator']}{dep['version_spec']['version']}")
+                else:
+                    dependencies.append(dep["name"])
+            
+            # Ustawiamy klucz "dependencies" dla zachowania kompatybilności z testami
+            data["dependencies"] = dependencies
+        
+        return data
     
     def convert(self, source_data: Dict[str, Any]) -> Dict[str, Any]:
         """

@@ -108,6 +108,12 @@ class PipSchema:
         lines = []
         
         for req in data["requirements"]:
+            # Obsługa przypadku, gdy req jest stringiem (prosty format zależności)
+            if isinstance(req, str):
+                lines.append(req)
+                continue
+                
+            # Obsługa przypadku, gdy req jest słownikiem (rozszerzony format zależności)
             req_type = req.get("type")
             
             if req_type == "comment":
