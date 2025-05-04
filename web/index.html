@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectomate - Package Format Converter</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/toml.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Spectomate</h1>
+                <p>Python Package Format Converter</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#converter">Converter</a></li>
+                    <li><a href="#examples">Examples</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#documentation">Documentation</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="hero">
+        <div class="container">
+            <h2>Convert Between Python Package Formats</h2>
+            <p>Easily transform requirements.txt, environment.yml, and pyproject.toml files</p>
+            <a href="#converter" class="btn">Try Online Converter</a>
+            <a href="https://github.com/spectomate/python" class="btn btn-outline">View on GitHub</a>
+        </div>
+    </section>
+
+    <section id="converter">
+        <div class="container">
+            <h2>Online Converter</h2>
+            <div class="converter-container">
+                <div class="converter-options">
+                    <div class="option-group">
+                        <label for="source-format">Source Format:</label>
+                        <select id="source-format">
+                            <option value="pip">pip (requirements.txt)</option>
+                            <option value="conda">conda (environment.yml)</option>
+                            <option value="poetry">poetry (pyproject.toml)</option>
+                            <option value="pipenv">pipenv (Pipfile)</option>
+                            <option value="setup">setup.py</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="target-format">Target Format:</label>
+                        <select id="target-format">
+                            <option value="pip">pip (requirements.txt)</option>
+                            <option value="conda">conda (environment.yml)</option>
+                            <option value="poetry" selected>poetry (pyproject.toml)</option>
+                            <option value="pipenv">pipenv (Pipfile)</option>
+                            <option value="setup">setup.py</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="project-name">Project Name (for conda/poetry):</label>
+                        <input type="text" id="project-name" placeholder="myproject" value="myproject">
+                    </div>
+                    <div class="option-group">
+                        <label for="project-version">Project Version (for poetry):</label>
+                        <input type="text" id="project-version" placeholder="0.1.0" value="0.1.0">
+                    </div>
+                    <button id="convert-btn" class="btn">Convert</button>
+                </div>
+                <div class="code-editors">
+                    <div class="source-editor">
+                        <h3>Source Code</h3>
+                        <div class="editor-wrapper">
+                            <pre><code id="source-code" class="language-python">numpy==1.22.0
+pandas>=1.4.0
+requests==2.27.1
+# Development dependencies
+pytest>=7.0.0
+black==22.1.0</code></pre>
+                        </div>
+                    </div>
+                    <div class="target-editor">
+                        <h3>Result</h3>
+                        <div class="editor-wrapper">
+                            <pre><code id="target-code" class="language-toml">[tool.poetry]
+name = "myproject"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "==1.22.0"
+pandas = ">=1.4.0"
+requests = "==2.27.1"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=7.0.0"
+black = "==22.1.0"
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="examples">
+        <div class="container">
+            <h2>Conversion Examples</h2>
+            <div class="examples-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="example1">pip → poetry</button>
+                    <button class="tab-btn" data-tab="example2">conda → pip</button>
+                    <button class="tab-btn" data-tab="example3">poetry → conda</button>
+                    <button class="tab-btn" data-tab="example4">pipenv → pip</button>
+                    <button class="tab-btn" data-tab="example5">setup.py → poetry</button>
+                </div>
+                <div class="tabs-content">
+                    <div class="tab-pane active" id="example1">
+                        <div class="example-container">
+                            <div class="example-code">
+                                <h3>requirements.txt</h3>
+                                <pre><code class="language-python">numpy==1.22.0
+pandas>=1.4.0
+requests==2.27.1
+matplotlib==3.5.1
+scikit-learn>=1.0.2
+# Dev dependencies
+pytest>=7.0.0
+black==22.1.0
+flake8==4.0.1</code></pre>
+                            </div>
+                            <div class="example-code">
+                                <h3>pyproject.toml</h3>
+                                <pre><code class="language-toml">[tool.poetry]
+name = "data-science-project"
+version = "0.1.0"
+description = "A data science project"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "1.22.0"
+pandas = ">=1.4.0"
+requests = "2.27.1"
+matplotlib = "3.5.1"
+scikit-learn = ">=1.0.2"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=7.0.0"
+black = "22.1.0"
+flake8 = "4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"</code></pre>
+                            </div>
+                            <div class="example-api">
+                                <h3>Python API Usage</h3>
+                                <pre><code class="language-python">from spectomate.converters.pip_to_poetry import PipToPoetryConverter
+
+# Create converter instance
+converter = PipToPoetryConverter(
+    source_file="requirements.txt",
+    target_file="pyproject.toml",
+    options={
+        "project_name": "data-science-project",
+        "version": "0.1.0",
+        "description": "A data science project"
+    }
+)
+
+# Execute conversion
+result_path = converter.execute()
+print(f"Conversion completed: {result_path}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="example2">
+                        <div class="example-container">
+                            <div class="example-code">
+                                <h3>environment.yml</h3>
+                                <pre><code class="language-yaml">name: ml-environment
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy=1.22.0
+  - pandas>=1.4.0
+  - scikit-learn=1.0.2
+  - tensorflow=2.8.0
+  - matplotlib=3.5.1
+  - pip:
+    - transformers==4.18.0
+    - datasets>=2.0.0</code></pre>
+                            </div>
+                            <div class="example-code">
+                                <h3>requirements.txt</h3>
+                                <pre><code class="language-python">numpy==1.22.0
+pandas>=1.4.0
+scikit-learn==1.0.2
+tensorflow==2.8.0
+matplotlib==3.5.1
+transformers==4.18.0
+datasets>=2.0.0</code></pre>
+                            </div>
+                            <div class="example-api">
+                                <h3>Python API Usage</h3>
+                                <pre><code class="language-python">from spectomate.converters.conda_to_pip import CondaToPipConverter
+
+# Create converter instance
+converter = CondaToPipConverter(
+    source_file="environment.yml",
+    target_file="requirements.txt"
+)
+
+# Execute conversion
+result_path = converter.execute()
+print(f"Conversion completed: {result_path}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="example3">
+                        <div class="example-container">
+                            <div class="example-code">
+                                <h3>pyproject.toml</h3>
+                                <pre><code class="language-toml">[tool.poetry]
+name = "web-app"
+version = "0.2.0"
+description = "A web application"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^2.0.1"
+sqlalchemy = "^1.4.23"
+pyjwt = "^2.1.0"
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.8b0"
+mypy = "^0.910"</code></pre>
+                            </div>
+                            <div class="example-code">
+                                <h3>environment.yml</h3>
+                                <pre><code class="language-yaml">name: web-app
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - flask=2.0.1
+  - sqlalchemy=1.4.23
+  - pyjwt=2.1.0
+  - requests=2.26.0
+  - pip:
+    - pytest>=6.2.5
+    - black>=21.8b0
+    - mypy>=0.910</code></pre>
+                            </div>
+                            <div class="example-api">
+                                <h3>Python API Usage</h3>
+                                <pre><code class="language-python">from spectomate.converters.poetry_to_conda import PoetryToCondaConverter
+
+# Create converter instance
+converter = PoetryToCondaConverter(
+    source_file="pyproject.toml",
+    target_file="environment.yml",
+    options={"python_version": "3.8"}
+)
+
+# Execute conversion
+result_path = converter.execute()
+print(f"Conversion completed: {result_path}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="example4">
+                        <div class="example-container">
+                            <div class="example-code">
+                                <h3>Pipfile</h3>
+                                <pre><code class="language-toml">[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = ">=3.2.0"
+djangorestframework = "==3.13.1"
+drf-yasg = ">=1.20.0"
+psycopg2-binary = "==2.9.3"
+gunicorn = "==20.1.0"
+
+[dev-packages]
+pytest = ">=7.0.0"
+pytest-django = ">=4.5.2"
+black = "==22.1.0"
+
+[requires]
+python_version = "3.9"</code></pre>
+                            </div>
+                            <div class="example-code">
+                                <h3>requirements.txt</h3>
+                                <pre><code class="language-python">django>=3.2.0
+djangorestframework==3.13.1
+drf-yasg>=1.20.0
+psycopg2-binary==2.9.3
+gunicorn==20.1.0
+# Dev dependencies
+pytest>=7.0.0
+pytest-django>=4.5.2
+black==22.1.0</code></pre>
+                            </div>
+                            <div class="example-api">
+                                <h3>Python API Usage</h3>
+                                <pre><code class="language-python">from spectomate.converters.pipenv_to_pip import PipenvToPipConverter
+
+# Create converter instance
+converter = PipenvToPipConverter(
+    source_file="Pipfile",
+    target_file="requirements.txt",
+    options={"include_dev": True}
+)
+
+# Execute conversion
+result_path = converter.execute()
+print(f"Conversion completed: {result_path}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="example5">
+                        <div class="example-container">
+                            <div class="example-code">
+                                <h3>setup.py</h3>
+                                <pre><code class="language-python">from setuptools import setup, find_packages
+
+setup(
+    name="my-package",
+    version="0.3.0",
+    packages=find_packages(),
+    install_requires=[
+        "click>=8.0.0",
+        "colorama==0.4.4",
+        "tqdm>=4.62.0",
+        "pyyaml==6.0",
+    ],
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "black==22.1.0",
+            "isort>=5.10.0",
+        ],
+    },
+    python_requires=">=3.7",
+)</code></pre>
+                            </div>
+                            <div class="example-code">
+                                <h3>pyproject.toml</h3>
+                                <pre><code class="language-toml">[tool.poetry]
+name = "my-package"
+version = "0.3.0"
+description = ""
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+click = ">=8.0.0"
+colorama = "0.4.4"
+tqdm = ">=4.62.0"
+pyyaml = "6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=7.0.0"
+black = "22.1.0"
+isort = ">=5.10.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"</code></pre>
+                            </div>
+                            <div class="example-api">
+                                <h3>Python API Usage</h3>
+                                <pre><code class="language-python">from spectomate.converters.setup_to_poetry import SetupToPoetryConverter
+
+# Create converter instance
+converter = SetupToPoetryConverter(
+    source_file="setup.py",
+    target_file="pyproject.toml"
+)
+
+# Execute conversion
+result_path = converter.execute()
+print(f"Conversion completed: {result_path}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="img/convert-icon.svg" alt="Convert Icon">
+                    </div>
+                    <h3>Multiple Format Support</h3>
+                    <p>Convert between pip, conda, poetry, pipenv, and setup.py formats with ease.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="img/api-icon.svg" alt="API Icon">
+                    </div>
+                    <h3>API & CLI</h3>
+                    <p>Use as a library, command-line tool, or web service.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="img/docker-icon.svg" alt="Docker Icon">
+                    </div>
+                    <h3>Docker Support</h3>
+                    <p>Run in isolated environments with our Docker image.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="img/extend-icon.svg" alt="Extend Icon">
+                    </div>
+                    <h3>Extensible</h3>
+                    <p>Easily add support for new package formats.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="documentation">
+        <div class="container">
+            <h2>Documentation</h2>
+            <div class="docs-container">
+                <div class="docs-menu">
+                    <ul>
+                        <li><a href="#" class="active" data-doc="architecture">Architecture</a></li>
+                        <li><a href="#" data-doc="converters">Converters</a></li>
+                        <li><a href="#" data-doc="schemas">Schemas</a></li>
+                        <li><a href="#" data-doc="api">API Reference</a></li>
+                        <li><a href="#" data-doc="cli">CLI Usage</a></li>
+                    </ul>
+                </div>
+                <div class="docs-content">
+                    <div id="architecture" class="doc-section active">
+                        <h3>Architecture</h3>
+                        <p>Spectomate is built on a modular architecture that makes it easy to extend and add new converters between different Python package management formats.</p>
+                        
+                        <h4>Key Components</h4>
+                        <ul>
+                            <li><strong>BaseConverter</strong> - Abstract base class that defines the common interface for all converters</li>
+                            <li><strong>Data Schemas</strong> - Define the data structure for each format</li>
+                            <li><strong>Converters</strong> - Implement the logic for conversion between formats</li>
+                            <li><strong>Converter Registry</strong> - Manages registration and discovery of converters</li>
+                        </ul>
+                        
+                        <div class="diagram">
+                            <img src="img/architecture-diagram.png" alt="Architecture Diagram">
+                        </div>
+                    </div>
+                    
+                    <div id="converters" class="doc-section">
+                        <h3>Converters</h3>
+                        <p>Converters are responsible for transforming data between different package management formats.</p>
+                        
+                        <h4>Available Converters</h4>
+                        <ul>
+                            <li><strong>CondaToPipConverter</strong> - Converts from conda format to pip format</li>
+                            <li><strong>PipToCondaConverter</strong> - Converts from pip format to conda format</li>
+                            <li><strong>PipToPoetryConverter</strong> - Converts from pip format to poetry format</li>
+                            <li><strong>PoetryToPipConverter</strong> - Converts from poetry format to pip format</li>
+                            <li><strong>PoetryToCondaConverter</strong> - Converts from poetry format to conda format</li>
+                            <li><strong>PipenvToPipConverter</strong> - Converts from pipenv format to pip format</li>
+                            <li><strong>PipenvToPoetryConverter</strong> - Converts from pipenv format to poetry format</li>
+                            <li><strong>SetupToPipConverter</strong> - Converts from setup.py format to pip format</li>
+                            <li><strong>SetupToPoetryConverter</strong> - Converts from setup.py format to poetry format</li>
+                        </ul>
+                        
+                        <h4>Example Usage</h4>
+                        <pre><code class="language-python">from spectomate.converters.pip_to_poetry import PipToPoetryConverter
+
+converter = PipToPoetryConverter(
+    source_file="requirements.txt",
+    target_file="pyproject.toml",
+    options={"project_name": "myproject", "version": "0.1.0"}
+)
+result_path = converter.execute()</code></pre>
+                    </div>
+                    
+                    <div id="schemas" class="doc-section">
+                        <h3>Data Schemas</h3>
+                        <p>Data schemas define the structure for each package format and provide methods for parsing and generating files.</p>
+                        
+                        <h4>Available Schemas</h4>
+                        <ul>
+                            <li><strong>PipSchema</strong> - Schema for pip format (requirements.txt)</li>
+                            <li><strong>CondaSchema</strong> - Schema for conda format (environment.yml)</li>
+                            <li><strong>PoetrySchema</strong> - Schema for poetry format (pyproject.toml)</li>
+                            <li><strong>PipenvSchema</strong> - Schema for pipenv format (Pipfile)</li>
+                            <li><strong>SetupSchema</strong> - Schema for setup.py format</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="api" class="doc-section">
+                        <h3>API Reference</h3>
+                        <p>Spectomate can be used as a Python library in your projects.</p>
+                        
+                        <h4>Basic Usage</h4>
+                        <pre><code class="language-python">from spectomate.core.registry import get_converter
+
+# Get a converter based on source and target formats
+converter = get_converter("pip", "poetry")(
+    source_file="requirements.txt",
+    target_file="pyproject.toml",
+    options={"project_name": "myproject", "version": "0.1.0"}
+)
+
+# Execute the conversion
+result_path = converter.execute()</code></pre>
+
+                        <h4>Advanced Usage</h4>
+                        <pre><code class="language-python">from spectomate.core.registry import get_converter
+from spectomate.schemas.pip_schema import PipSchema
+from spectomate.schemas.poetry_schema import PoetrySchema
+
+# Parse source file manually
+source_data = PipSchema.parse_file("requirements.txt")
+
+# Get converter
+converter_class = get_converter("pip", "poetry")
+converter = converter_class(
+    source_file=None,  # We'll provide data directly
+    target_file="pyproject.toml",
+    options={"project_name": "myproject", "version": "0.1.0"}
+)
+
+# Convert data manually
+converter.source_data = source_data
+target_data = converter.convert(source_data)
+
+# Generate target file
+PoetrySchema.generate_pyproject_toml(target_data, "pyproject.toml")</code></pre>
+                    </div>
+                    
+                    <div id="cli" class="doc-section">
+                        <h3>CLI Usage</h3>
+                        <p>Spectomate provides a command-line interface for easy usage.</p>
+                        
+                        <h4>Basic Commands</h4>
+                        <pre><code class="language-bash"># Convert from pip to poetry
+spectomate -s pip -t poetry -i requirements.txt -o pyproject.toml --project-name myproject --version 0.1.0
+
+# Convert from conda to pip
+spectomate -s conda -t pip -i environment.yml -o requirements.txt
+
+# Convert from poetry to conda
+spectomate -s poetry -t conda -i pyproject.toml -o environment.yml
+
+# Convert from pipenv to pip
+spectomate -s pipenv -t pip -i Pipfile -o requirements.txt --include-dev
+
+# List available converters
+spectomate --list-converters</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>About Spectomate</h2>
+            <p>Spectomate is an open-source project designed to simplify the conversion between different Python package management formats. It was created to solve the common problem of migrating between package management systems.</p>
+            
+            <div class="about-links">
+                <a href="https://github.com/spectomate/python" class="btn">GitHub Repository</a>
+                <a href="https://hub.docker.com/r/spectomate/converter" class="btn">Docker Image</a>
+                <a href="https://pypi.org/project/spectomate/" class="btn">PyPI Package</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Spectomate</h3>
+                    <p>Python Package Format Converter</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-links-column">
+                        <h4>Project</h4>
+                        <ul>
+                            <li><a href="https://github.com/spectomate/python">GitHub</a></li>
+                            <li><a href="https://pypi.org/project/spectomate/">PyPI</a></li>
+                            <li><a href="https://hub.docker.com/r/spectomate/converter">Docker Hub</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4>Documentation</h4>
+                        <ul>
+                            <li><a href="#architecture">Architecture</a></li>
+                            <li><a href="#converters">Converters</a></li>
+                            <li><a href="#schemas">Schemas</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4>Languages</h4>
+                        <ul>
+                            <li><a href="#">English</a></li>
+                            <li><a href="#">Polski</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Spectomate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>

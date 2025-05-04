@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2025-05-04
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in web/index.html
+
+### Changed
+- Changes in .gitlab-ci.yml
+- Changes in web/README.md
+
 ## [0.1.5] - 2025-05-04
 
 ### Added
