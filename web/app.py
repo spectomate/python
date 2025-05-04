@@ -5,7 +5,7 @@ import sys
 # Add the parent directory to the path so we can import spectomate
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from spectomate.core.registry import get_converter
+from spectomate.core.registry import ConverterRegistry
 from spectomate.schemas.pip_schema import PipSchema
 from spectomate.schemas.conda_schema import CondaSchema
 from spectomate.schemas.poetry_schema import PoetrySchema
@@ -53,7 +53,7 @@ def convert():
         target_path = tempfile.mktemp(suffix=get_file_extension(target_format))
         
         # Get the appropriate converter
-        converter_class = get_converter(source_format, target_format)
+        converter_class = ConverterRegistry.get_converter(source_format, target_format)
         if not converter_class:
             return jsonify({"error": f"No converter available for {source_format} to {target_format}"}), 400
         

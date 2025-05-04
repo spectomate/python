@@ -215,6 +215,96 @@ nav ul li a:hover {
     line-height: 1.5;
 }
 
+/* Examples Section */
+#examples {
+    padding: 80px 0;
+}
+
+#examples h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.examples-tabs {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.tabs-header {
+    display: flex;
+    background-color: #f1f3f5;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 15px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-color);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    background-color: rgba(74, 108, 247, 0.05);
+    color: var(--primary-color);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background-color: rgba(74, 108, 247, 0.1);
+}
+
+.tab-pane {
+    display: none;
+    padding: 30px;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.example-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.example-code, .example-api {
+    background-color: var(--background-alt);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.example-code h3, .example-api h3 {
+    padding: 15px;
+    margin: 0;
+    background-color: #f1f3f5;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 16px;
+    color: var(--primary-color);
+}
+
+.example-code pre, .example-api pre {
+    margin: 0;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.example-code code, .example-api code {
+    padding: 15px !important;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
 /* Features Section */
 #features {
     padding: 80px 0;
@@ -487,5 +577,9 @@ footer {
     
     .footer-links {
         justify-content: center;
+    }
+    
+    .example-container {
+        grid-template-columns: 1fr;
     }
 }

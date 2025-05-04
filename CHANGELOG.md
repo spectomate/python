@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.7] - 2025-05-04
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in web/app.py
+- Changes in web/css/styles.css
+- Changes in web/js/main.js
+
 ## [0.1.6] - 2025-05-04
 
 ### Added

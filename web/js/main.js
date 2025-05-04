@@ -25,6 +25,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // Handle examples tab switching
+    const exampleTabButtons = document.querySelectorAll('.tab-btn');
+    const exampleTabPanes = document.querySelectorAll('.tab-pane');
+    
+    exampleTabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and panes
+            exampleTabButtons.forEach(btn => btn.classList.remove('active'));
+            exampleTabPanes.forEach(pane => pane.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Show corresponding pane
+            const targetPane = document.getElementById(button.getAttribute('data-tab'));
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+        });
+    });
+    
     // Handle format selection and code highlighting
     const sourceFormatSelect = document.getElementById('source-format');
     const targetFormatSelect = document.getElementById('target-format');
@@ -107,6 +128,10 @@ black = "22.1.0"
                 return 'language-yaml';
             case 'poetry':
                 return 'language-toml';
+            case 'pipenv':
+                return 'language-toml';
+            case 'setup':
+                return 'language-python';
             default:
                 return 'language-python';
         }
