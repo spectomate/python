@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.34] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in docs/README.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
+### Changed
+- Changes in docs/TESTING.md
+
+## [0.1.33] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
+## [0.1.32] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in examples/test_all_converters.py
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/cli.py
+- Changes in spectomate/core/mypy_helper.py
+- Changes in spectomate/mypy_cli.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+
+### Changed
+- Changes in scripts/fix_mypy_issues.py
+- Changes in spectomate/__main__.py
+- Changes in spectomate/test_cli.py
+
+## [0.1.31] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in examples/test_all_converters.py
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/cli.py
+- Changes in spectomate/core/mypy_helper.py
+- Changes in spectomate/mypy_cli.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+
+### Changed
+- Changes in scripts/fix_mypy_issues.py
+
+## [0.1.30] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/cli.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+
 ## [0.1.29] - 2025-05-05
 
 ### Added

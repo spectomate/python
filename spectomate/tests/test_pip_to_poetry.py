@@ -19,7 +19,7 @@ class TestPipToPoetryConverter:
     Testy dla konwertera z formatu pip do formatu poetry.
     """
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Przygotowanie środowiska testowego."""
         # Tworzymy tymczasowy katalog na pliki testowe
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -45,11 +45,11 @@ class TestPipToPoetryConverter:
         # Ścieżka do pliku wyjściowego
         self.output_file = self.temp_path / "pyproject.toml"
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         """Czyszczenie po testach."""
         self.temp_dir.cleanup()
 
-    def test_read_source(self):
+    def test_read_source(self) -> None:
         """Test odczytu pliku requirements.txt."""
         converter = PipToPoetryConverter(source_file=self.requirements_file)
         source_data = converter.read_source()
@@ -62,7 +62,7 @@ class TestPipToPoetryConverter:
         assert "requests>=2.27.0" in source_data["dependencies"]
         assert "pyyaml>=6.0" in source_data["dependencies"]
 
-    def test_convert(self):
+    def test_convert(self) -> None:
         """Test konwersji danych z formatu pip do formatu poetry."""
         converter = PipToPoetryConverter(
             source_file=self.requirements_file,
@@ -89,7 +89,7 @@ class TestPipToPoetryConverter:
         assert "pyyaml" in deps
         assert deps["pyyaml"] == ">=6.0"
 
-    def test_write_target(self):
+    def test_write_target(self) -> None:
         """Test zapisu danych do pliku pyproject.toml."""
         converter = PipToPoetryConverter(
             source_file=self.requirements_file,
@@ -129,7 +129,7 @@ class TestPipToPoetryConverter:
         assert "pyyaml" in deps
         assert deps["pyyaml"] == ">=6.0"
 
-    def test_execute(self):
+    def test_execute(self) -> None:
         """Test pełnego procesu konwersji."""
         converter = PipToPoetryConverter(
             source_file=self.requirements_file,

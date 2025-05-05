@@ -10,6 +10,8 @@ import click
 
 from spectomate import __version__, registry
 from spectomate.core.utils import get_available_formats
+from spectomate.mypy_cli import mypy_cli
+from spectomate.test_cli import test_cli
 from spectomate.update_cli import update_command
 
 
@@ -134,6 +136,12 @@ def convert(
 
 # Rejestracja komendy update
 cli.add_command(update_command, name="update")
+
+# Rejestracja komendy mypy
+cli.add_command(mypy_cli, name="mypy")
+
+# Rejestracja komendy test
+cli.add_command(test_cli, name="test")
 
 
 def main(args: Optional[List[str]] = None) -> int:

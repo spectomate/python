@@ -30,7 +30,7 @@ pyyaml>=6.0
     return Path("test_requirements.txt")
 
 
-def test_pip_to_conda(requirements_file):
+def test_pip_to_conda(requirements_file) -> None:
     """Testuje konwersję z formatu pip do formatu conda."""
     print("\n=== Test konwersji pip -> conda ===")
     
@@ -65,7 +65,7 @@ def test_conda_to_pip(environment_file):
     
     converter = CondaToPipConverter(
         source_file=environment_file,
-        target_file=output_file
+        target_file=output_file -> None
     )
     
     try:
@@ -99,7 +99,7 @@ def test_pip_to_poetry(requirements_file):
         result_path = converter.execute()
         print(f"Konwersja zakończona pomyślnie. Wynik zapisano w: {result_path}")
         
-        # Wyświetlamy zawartość pliku
+        # Wyświetlamy zawartość pliku -> None
         print("\nZawartość pliku pyproject.toml:")
         with open(result_path, "r") as f:
             print(f.read())

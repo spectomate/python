@@ -20,11 +20,11 @@ try:
     from env_manager import get_project_name, get_package_path, get_project_root
 except ImportError:
     print("Cannot import env_manager module. Using default values.")
-    def get_project_name():
+    def get_project_name() -> None:
         return "unknown"
-    def get_package_path():
+    def get_package_path() -> None:
         return "unknown"
-    def get_project_root():
+    def get_project_root() -> None:
         return os.getcwd()
 
 # Initialize rich console
@@ -284,8 +284,8 @@ def run_tox() -> Dict[str, Any]:
     return {"success": True, "message": "Tox tests passed", "output": stdout}
 
 def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False, 
-                 no_lint: bool = False, no_tests: bool = False,
-                 no_mypy: bool = False) -> Dict[str, Any]:
+                 skip_lint: bool = False, skip_tests: bool = False,
+                 skip_mypy: bool = False) -> Dict[str, Any]:
     """
     Run all tests and code quality checks.
     
@@ -293,9 +293,9 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False,
         src_dir: Directory to run tests on
         fix: Whether to fix issues automatically
         run_tox_tests: Whether to run tox tests
-        no_lint: Whether to skip linting
-        no_tests: Whether to skip tests
-        no_mypy: Whether to skip mypy type checking
+        skip_lint: Whether to skip linting
+        skip_tests: Whether to skip tests
+        skip_mypy: Whether to skip mypy type checking
         
     Returns:
         Dictionary with results
@@ -303,7 +303,7 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False,
     results = {}
     
     # Run linting checks if not skipped
-    if not no_lint:
+    if not skip_lint:
         # Run flake8
         results["flake8"] = run_flake8(src_dir)
         
@@ -314,11 +314,11 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False,
         results["isort"] = run_isort(src_dir, check_only=not fix)
         
         # Run mypy if not skipped
-        if not no_mypy:
+        if not skip_mypy:
             results["mypy"] = run_mypy(src_dir)
     
     # Run tests if not skipped
-    if not no_tests:
+    if not skip_tests:
         # Run pytest
         results["pytest"] = run_pytest(src_dir)
         
@@ -359,9 +359,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run code quality checks and tests")
     parser.add_argument("--fix", action="store_true", help="Fix issues automatically")
     parser.add_argument("--tox", action="store_true", help="Run tox tests")
-    parser.add_argument("--no-lint", action="store_true", help="Skip linting")
-    parser.add_argument("--no-tests", action="store_true", help="Skip tests")
-    parser.add_argument("--no-mypy", action="store_true", help="Skip mypy type checking")
+    parser.add_argument("--skip-lint", action="store_true", help="Skip linting")
+    parser.add_argument("--skip-tests", action="store_true", help="Skip tests")
+    parser.add_argument("--skip-mypy", action="store_true", help="Skip mypy type checking")
     args = parser.parse_args()
     
     # Get project information
@@ -397,9 +397,9 @@ def main() -> int:
         src_dir=src_dir,
         fix=args.fix,
         run_tox_tests=args.tox,
-        no_lint=args.no_lint,
-        no_tests=args.no_tests,
-        no_mypy=args.no_mypy
+        skip_lint=args.skip_lint,
+        skip_tests=args.skip_tests,
+        skip_mypy=args.skip_mypy
     )
     
     # Print summary
@@ -427,10 +427,10 @@ def main() -> int:
     console.print(table)
     
     if all_passed:
-        console.print("[bold green]All tests passed![/bold green]")
+        console.print("[green bold]All tests passed![/green bold]")
         return 0
     else:
-        console.print("[bold red]Some tests failed![/bold red]")
+        console.print("[red bold]Some tests failed![/red bold]")
         return 1
 
 if __name__ == "__main__":

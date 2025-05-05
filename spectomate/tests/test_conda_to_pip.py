@@ -19,7 +19,7 @@ class TestCondaToPipConverter:
     Testy dla konwertera z formatu conda do formatu pip.
     """
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Przygotowanie środowiska testowego."""
         # Tworzymy tymczasowy katalog na pliki testowe
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -48,11 +48,11 @@ class TestCondaToPipConverter:
         # Ścieżka do pliku wyjściowego
         self.output_file = self.temp_path / "requirements.txt"
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         """Czyszczenie po testach."""
         self.temp_dir.cleanup()
 
-    def test_read_source(self):
+    def test_read_source(self) -> None:
         """Test odczytu pliku environment.yml."""
         converter = CondaToPipConverter(source_file=self.environment_file)
         source_data = converter.read_source()
@@ -69,7 +69,7 @@ class TestCondaToPipConverter:
         assert "requests>=2.27.0" in pip_deps
         assert "pyyaml>=6.0" in pip_deps
 
-    def test_convert(self):
+    def test_convert(self) -> None:
         """Test konwersji danych z formatu conda do formatu pip."""
         converter = CondaToPipConverter(source_file=self.environment_file)
 
@@ -93,7 +93,7 @@ class TestCondaToPipConverter:
         assert "requests>=2.27.0" in deps
         assert "pyyaml>=6.0" in deps
 
-    def test_write_target(self):
+    def test_write_target(self) -> None:
         """Test zapisu danych do pliku requirements.txt."""
         converter = CondaToPipConverter(
             source_file=self.environment_file, target_file=self.output_file
@@ -118,7 +118,7 @@ class TestCondaToPipConverter:
         assert "requests>=2.27.0" in content
         assert "pyyaml>=6.0" in content
 
-    def test_execute(self):
+    def test_execute(self) -> None:
         """Test pełnego procesu konwersji."""
         converter = CondaToPipConverter(
             source_file=self.environment_file, target_file=self.output_file

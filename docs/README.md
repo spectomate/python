@@ -9,6 +9,8 @@ This directory contains the documentation for the Spectomate project.
 - [Architecture](ARCHITECTURE.md) - Description of the Spectomate system architecture
 - [Converters](CONVERTERS.md) - Documentation of available converters and instructions for creating custom ones
 - [Data Schemas](SCHEMAS.md) - Description of data schemas used in the system
+- [Mypy Helper](mypy_helper.md) - Guide to using the mypy helper tools for type checking
+- [Testing](TESTING.md) - Guide to testing tools and workflows
 
 ### Diagrams
 
