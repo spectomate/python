@@ -1,7 +1,7 @@
 ---
 title: "Spectomate Documentation"
 description: "Comprehensive documentation for the Spectomate Python package format converter"
-author: "Spectomate Team"
+author: "Tom Sapletta"
 keywords: "spectomate, documentation, python, package management, converter, architecture, diagrams"
 lang: "en"
 ---

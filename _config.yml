@@ -7,7 +7,7 @@ baseurl: /python
 
 # SEO settings
 author:
-  name: Spectomate Team
+  name: Tom Sapletta
   url: https://github.com/spectomate
 logo: /docs/diagrams/logo.png
 lang: en_US

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.47] - 2025-05-05
+
+### Added
+- Changes in .gitlab-ci.yml
+- Changes in README.md
+- Changes in _config.yml
+- Changes in docs/ARCHITECTURE.md
+- Changes in docs/CONVERTERS.md
+- Changes in docs/README.md
+- Changes in docs/SCHEMAS.md
+- Changes in docs/TESTING.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+- Changes in web/README.md
+- Changes in web/nginx/conf.d/default.conf
+
 ## [0.1.46] - 2025-05-05
 
 ### Added

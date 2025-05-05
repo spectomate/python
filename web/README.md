@@ -75,7 +75,7 @@ mkdir -p nginx/ssl
 docker-compose up -d
 ```
 
-5. Access your application at https://converter.spectomate.com
+5. Access your application at https://python.spectomate.com
 
 ## GitLab CI/CD Configuration
 
