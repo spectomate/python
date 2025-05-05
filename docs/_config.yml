@@ -1,11 +1,15 @@
-# Jekyll configuration for docs directory
-title: Spectomate Documentation
-description: Comprehensive documentation for the Spectomate Python package format converter
+title: "Spectomate - Python Package Management Format Converter"
+description: "A tool for converting projects between different Python package management formats (pip, conda, poetry)"
+author:
+  name: "Tom Sapletta"
+  url: https://github.com/tom-sapletta-com
+lang: "en"
+keywords: "python, package management, pip, conda, poetry, converter, requirements.txt, environment.yml, pyproject.toml"
+image: "https://github.com/spectomate/python/raw/main/docs/diagrams/logo.png"
+
+# Keep your existing configuration below this
 url: https://spectomate.github.io
 baseurl: /python/docs
-author:
-  name: Tom Sapletta
-  url: https://github.com/spectomate
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
