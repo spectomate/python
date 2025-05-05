@@ -2,6 +2,172 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.26] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.25] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.24] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.23] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.22] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.21] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.20] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.19] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.18] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.17] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.16] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.15] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/update_cli.py
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+## [0.1.14] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in update/env_manager.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
 ## [0.1.13] - 2025-05-05
 
 ### Added

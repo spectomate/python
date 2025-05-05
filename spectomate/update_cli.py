@@ -1,7 +1,3 @@
-"""
-Interfejs wiersza poleceń dla funkcji aktualizacji Spectomate.
-"""
-
 import os
 import subprocess
 import sys
@@ -19,7 +15,7 @@ def run_update_script(
     verbose: bool = False,
 ) -> int:
     """
-    Uruchamia skrypt aktualizacji z odpowiednimi opcjami.
+    Uruchamia skrypt aktualizujący wersję pakietu.
 
     Args:
         skip_tests: Czy pominąć testy
@@ -29,20 +25,43 @@ def run_update_script(
         verbose: Czy wyświetlać szczegółowe informacje
 
     Returns:
-        Kod wyjścia (0 dla sukcesu, >0 dla błędu)
+        Kod wyjścia skryptu (0 oznacza sukces)
     """
-    # Określ ścieżkę do głównego katalogu projektu
-    project_root = Path(__file__).parent.parent.absolute()
-    update_script = project_root / "update" / "version.sh"
+    # Znajdź ścieżkę do katalogu update
+    # Najpierw sprawdź, czy jesteśmy w projekcie spectomate
+    spectomate_update_dir = Path(__file__).parent.parent / "update"
 
-    if not update_script.exists():
+    # Jeśli nie jesteśmy w projekcie spectomate, sprawdź czy mamy dostęp do skryptów update
+    # w bieżącym projekcie
+    if spectomate_update_dir.exists():
+        update_dir = spectomate_update_dir
+    else:
+        # Sprawdź, czy w bieżącym projekcie jest katalog update
+        current_dir = Path.cwd()
+        project_update_dir = current_dir / "update"
+
+        if project_update_dir.exists():
+            update_dir = project_update_dir
+        else:
+            click.echo(
+                "Nie znaleziono katalogu update. Sprawdź, czy jesteś w katalogu projektu."
+            )
+            return 1
+
+    version_script = update_dir / "version.sh"
+
+    if not version_script.exists():
         click.echo(
-            f"Błąd: Nie znaleziono skryptu aktualizacji: {update_script}", err=True
+            f"Nie znaleziono skryptu {version_script}. Sprawdź, czy jesteś w katalogu projektu."
         )
         return 1
 
-    # Przygotuj argumenty dla skryptu aktualizacji
+    # Ustaw zmienne środowiskowe na podstawie parametrów
     env = os.environ.copy()
+
+    # Ustaw zmienną TERM, jeśli nie jest ustawiona
+    if "TERM" not in env:
+        env["TERM"] = "xterm"
 
     if skip_tests:
         env["SKIP_TESTS"] = "1"
@@ -59,46 +78,62 @@ def run_update_script(
     if verbose:
         env["VERBOSE"] = "1"
 
-    # Uruchom skrypt aktualizacji
+    # Uruchom skrypt
     try:
-        click.echo("Uruchamianie procesu aktualizacji...")
-
-        process = subprocess.Popen(
-            ["bash", str(update_script)], env=env, cwd=str(project_root)
+        result = subprocess.run(
+            ["bash", str(version_script)],
+            env=env,
+            check=False,
         )
-
-        return process.wait()
-    except Exception as e:
-        click.echo(
-            f"Błąd podczas uruchamiania skryptu aktualizacji: {str(e)}", err=True
-        )
+        return result.returncode
+    except subprocess.SubprocessError as e:
+        click.echo(f"Błąd podczas uruchamiania skryptu: {e}", err=True)
         return 1
 
 
 @click.command()
 @click.option("--no-test", is_flag=True, help="Pomiń uruchamianie testów")
 @click.option("--no-lint", is_flag=True, help="Pomiń sprawdzanie linterem")
-@click.option("--skip-mypy", is_flag=True, help="Pomiń sprawdzanie typów mypy")
+@click.option("--no-mypy", is_flag=True, help="Pomiń sprawdzanie typów mypy")
 @click.option("--no-publish", is_flag=True, help="Pomiń publikację do PyPI i GitHub")
 @click.option("--verbose", is_flag=True, help="Wyświetlaj szczegółowe informacje")
 def update_command(
-    no_test: bool, no_lint: bool, skip_mypy: bool, no_publish: bool, verbose: bool
+    no_test: bool, no_lint: bool, no_mypy: bool, no_publish: bool, verbose: bool
 ) -> None:
     """Aktualizuje wersję pakietu i opcjonalnie publikuje go.
 
-    Domyślnie uruchamia pełny proces aktualizacji, włączając testy, sprawdzanie linterem i publikację.
+    Komenda automatycznie aktualizuje numer wersji w plikach projektu, uruchamia testy i publikuje pakiet.
     Można wyłączyć poszczególne etapy za pomocą opcji --no-*.
+
+    Przykłady:
+        spectomate update                  # Pełna aktualizacja z publikacją
+        spectomate update --no-publish     # Aktualizacja bez publikacji
+        spectomate update --no-mypy        # Aktualizacja bez sprawdzania typów mypy
+        spectomate update --no-test        # Aktualizacja bez uruchamiania testów
+        spectomate update --no-lint        # Aktualizacja bez sprawdzania linterem
+        spectomate update --verbose        # Aktualizacja z wyświetlaniem szczegółowych informacji
     """
+    # Pobierz nazwę projektu z bieżącego katalogu
+    try:
+        project_name = Path.cwd().name
+    except Exception:
+        project_name = "projekt"
+
+    click.echo(f"Aktualizowanie pakietu {project_name}...")
+
     exit_code = run_update_script(
         skip_tests=no_test,
         skip_lint=no_lint,
-        skip_mypy=skip_mypy,
+        skip_mypy=no_mypy,
         skip_publish=no_publish,
         verbose=verbose,
     )
 
     if exit_code != 0:
-        click.echo("Aktualizacja zakończona niepowodzeniem.", err=True)
+        click.echo(
+            "Aktualizacja nie powiodła się. Sprawdź komunikaty błędów powyżej.",
+            err=True,
+        )
         sys.exit(exit_code)
     else:
         click.echo("Aktualizacja zakończona pomyślnie!")

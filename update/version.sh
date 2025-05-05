@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e  # Stop script on first error
 
+# Ustaw zmienną TERM, jeśli nie jest ustawiona
+if [ -z "$TERM" ]; then
+    export TERM=xterm
+fi
+
 # Clear screen and show start information
 clear
 echo "Starting publication process..."
@@ -24,20 +29,26 @@ fi
 
 # Get project configuration
 echo "Getting project configuration..."
+
+# Determine the current working directory and the location of the update scripts
+CURRENT_DIR=$(pwd)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Add the update directory to Python path
 PROJECT_CONFIG=$(python3 -c "
 import sys
 import os
-sys.path.append(os.path.join(os.getcwd(), 'update'))
+sys.path.append('$SCRIPT_DIR')
 try:
     from env_manager import get_project_name, get_package_path, get_project_root
     
     # Ask user for project name if not defined
     project_name = get_project_name(True)
     package_path = get_package_path(True)
+    project_root = get_project_root()
     
     # Get version files - use only pyproject.toml which is usually accessible
     version_files = []
-    project_root = get_project_root()
     
     # Check pyproject.toml
     pyproject_path = os.path.join(project_root, 'pyproject.toml')
@@ -46,10 +57,12 @@ try:
     
     print(f\"PROJECT_NAME={project_name}\")
     print(f\"PACKAGE_PATH={package_path}\")
+    print(f\"PROJECT_ROOT={project_root}\")
     print(f\"VERSION_FILES={';'.join(version_files)}\")
 except Exception as e:
-    print(f\"PROJECT_NAME=twinizer\")
-    print(f\"PACKAGE_PATH=twinizer\")
+    print(f\"PROJECT_NAME=unknown\")
+    print(f\"PACKAGE_PATH=unknown\")
+    print(f\"PROJECT_ROOT=$CURRENT_DIR\")
     print(f\"VERSION_FILES=pyproject.toml\")
     print(f\"# Error: {e}\", file=sys.stderr)
 ")
@@ -58,7 +71,14 @@ except Exception as e:
 eval "$PROJECT_CONFIG"
 echo "Project name: $PROJECT_NAME"
 echo "Package path: $PACKAGE_PATH"
+echo "Project root: $PROJECT_ROOT"
 echo "Version files: $VERSION_FILES"
+
+# Change to project root directory if it's not the current directory
+if [ "$PROJECT_ROOT" != "$CURRENT_DIR" ]; then
+    echo "Changing to project root directory: $PROJECT_ROOT"
+    cd "$PROJECT_ROOT"
+fi
 
 # Check if virtualenv is already activated
 if [ -z "$VIRTUAL_ENV" ]; then
@@ -100,7 +120,7 @@ if [ -n "$VERSION_FILES" ]; then
     for file in "${FILES[@]}"; do
         if [ -w "$file" ]; then
             echo "Updating version in file: $file"
-            python update/src.py -f "$file" --type patch || echo "Failed to update version in file $file"
+            python "$SCRIPT_DIR/src.py" -f "$file" --type patch || echo "Failed to update version in file $file"
         else
             echo "Skipped file $file (no write permission)"
         fi
@@ -115,9 +135,9 @@ echo "Generating entry in CHANGELOG.md..."
 if [ -f "CHANGELOG.md" ] && [ ! -w "CHANGELOG.md" ]; then
     echo "Warning: No write permission to CHANGELOG.md file"
     echo "Creating temporary file CHANGELOG.md.new"
-    python update/changelog.py --output CHANGELOG.md.new || echo "Failed to generate entry in CHANGELOG.md"
+    python "$SCRIPT_DIR/changelog.py" --output CHANGELOG.md.new || echo "Failed to generate entry in CHANGELOG.md"
 else
-    python update/changelog.py || echo "Failed to generate entry in CHANGELOG.md"
+    python "$SCRIPT_DIR/changelog.py" || echo "Failed to generate entry in CHANGELOG.md"
 fi
 
 # Run code quality checks and tests if not skipped
@@ -138,13 +158,13 @@ if [ "$SKIP_TESTS" != "1" ] || [ "$SKIP_LINT" != "1" ]; then
     fi
     
     if [ "$SKIP_MYPY" = "1" ]; then
-        TEST_OPTIONS="$TEST_OPTIONS --skip-mypy"
+        TEST_OPTIONS="$TEST_OPTIONS --no-mypy"
     fi
     
-    bash update/test.sh $TEST_OPTIONS
+    bash "$SCRIPT_DIR/test.sh" $TEST_OPTIONS
     if [ $? -ne 0 ]; then
         echo "Code quality checks or tests failed. Please fix the issues before publishing."
-        echo "You can run './update/test.sh --fix' to automatically fix some issues."
+        echo "You can run '$SCRIPT_DIR/test.sh --fix' to automatically fix some issues."
         exit 1
     fi
     echo "All code quality checks and tests passed!"
@@ -154,11 +174,11 @@ fi
 if [ "$SKIP_PUBLISH" != "1" ]; then
     # Publish to GitHub
     echo "Push changes..."
-    bash update/git.sh
+    bash "$SCRIPT_DIR/git.sh"
 
     # Publish to PyPI
     echo "Publishing to PyPI..."
-    bash update/pypi.sh
+    bash "$SCRIPT_DIR/pypi.sh"
     
     echo "Publication process completed successfully!"
 else

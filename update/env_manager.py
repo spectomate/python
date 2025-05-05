@@ -15,8 +15,26 @@ from typing import Dict, Optional, Any
 
 def get_project_root() -> Path:
     """Returns the path to the project root directory."""
-    # Assuming this script is in the update directory
-    return Path(__file__).parent.parent
+    # First check if we're in a development environment of spectomate itself
+    spectomate_path = Path(__file__).parent.parent
+    if (spectomate_path / "spectomate").exists() and (spectomate_path / "pyproject.toml").exists():
+        return spectomate_path
+    
+    # Otherwise, use the current working directory as the project root
+    current_dir = Path.cwd()
+    
+    # Try to find the project root by looking for common project files
+    # Start from the current directory and go up
+    dir_to_check = current_dir
+    while dir_to_check != dir_to_check.parent:  # Stop at root directory
+        # Check for common project files/directories
+        if any((dir_to_check / marker).exists() for marker in ["pyproject.toml", "setup.py", ".git"]):
+            return dir_to_check
+        # Go up one level
+        dir_to_check = dir_to_check.parent
+    
+    # If no project root markers found, default to current directory
+    return current_dir
 
 
 def create_env_file_if_not_exists(env_file: Path = None) -> None:

@@ -7,3 +7,5 @@ black>=22.0.0
 isort>=5.10.0
 mypy>=0.950
 flake8>=4.0.0
+types-toml>=0.10.0
+types-PyYAML>=6.0.0

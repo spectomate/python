@@ -26,13 +26,16 @@ Komenda `update` obsługuje następujące opcje:
 
 - `--no-test` - pomija uruchamianie testów
 - `--no-lint` - pomija sprawdzanie jakości kodu (linting)
-- `--skip-mypy` - pomija sprawdzanie typów mypy
+- `--no-mypy` - pomija sprawdzanie typów mypy
 - `--no-publish` - pomija publikację do GitHuba i PyPI
 - `--verbose` - wyświetla szczegółowe informacje podczas aktualizacji
 
-Przykłady użycia:
+### Przykłady użycia
 
 ```bash
+# Pełna aktualizacja z testami i publikacją
+spectomate update
+
 # Aktualizacja bez uruchamiania testów
 spectomate update --no-test
 
@@ -40,7 +43,7 @@ spectomate update --no-test
 spectomate update --no-lint
 
 # Aktualizacja bez sprawdzania typów mypy
-spectomate update --skip-mypy
+spectomate update --no-mypy
 
 # Aktualizacja bez publikacji
 spectomate update --no-publish
@@ -48,9 +51,23 @@ spectomate update --no-publish
 # Aktualizacja z pominięciem testów i publikacji
 spectomate update --no-test --no-publish
 
+# Aktualizacja z pominięciem wszystkich testów
+spectomate update --no-test --no-lint --no-mypy
+
 # Aktualizacja z wyświetlaniem szczegółowych informacji
 spectomate update --verbose
 ```
+
+### Użycie w projektach zewnętrznych
+
+Komenda `update` automatycznie wykrywa katalog projektu, w którym jest uruchamiana. Możesz używać jej w dowolnym projekcie, który korzysta z pakietu Spectomate:
+
+```bash
+cd /ścieżka/do/twojego/projektu
+spectomate update --no-publish
+```
+
+Komenda wykryje katalog projektu na podstawie plików takich jak `pyproject.toml`, `setup.py` lub `.git`.
 
 ## Ręczne uruchamianie skryptów aktualizacji
 
