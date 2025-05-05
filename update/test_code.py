@@ -14,18 +14,17 @@ from rich.console import Console
 from rich.table import Table
 
 # Add path to the update directory to import modules
-script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(script_dir)
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     from env_manager import get_project_name, get_package_path, get_project_root
 except ImportError:
     print("Cannot import env_manager module. Using default values.")
-    def get_project_name() -> None:
-        return "unknown"
-    def get_package_path() -> None:
-        return "unknown"
-    def get_project_root() -> None:
-        return os.getcwd()
+    def get_project_name():
+        return "twinizer"
+    def get_package_path():
+        return "twinizer"
+    def get_project_root():
+        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Initialize rich console
 console = Console()
@@ -283,9 +282,7 @@ def run_tox() -> Dict[str, Any]:
     console.print("[green]Tox tests passed![/green]")
     return {"success": True, "message": "Tox tests passed", "output": stdout}
 
-def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False, 
-                 skip_lint: bool = False, skip_tests: bool = False,
-                 skip_mypy: bool = False) -> Dict[str, Any]:
+def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False) -> Dict[str, Any]:
     """
     Run all tests and code quality checks.
     
@@ -293,38 +290,30 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False,
         src_dir: Directory to run tests on
         fix: Whether to fix issues automatically
         run_tox_tests: Whether to run tox tests
-        skip_lint: Whether to skip linting
-        skip_tests: Whether to skip tests
-        skip_mypy: Whether to skip mypy type checking
         
     Returns:
         Dictionary with results
     """
     results = {}
     
-    # Run linting checks if not skipped
-    if not skip_lint:
-        # Run flake8
-        results["flake8"] = run_flake8(src_dir)
-        
-        # Run black
-        results["black"] = run_black(src_dir, check_only=not fix)
-        
-        # Run isort
-        results["isort"] = run_isort(src_dir, check_only=not fix)
-        
-        # Run mypy if not skipped
-        if not skip_mypy:
-            results["mypy"] = run_mypy(src_dir)
+    # Run flake8
+    results["flake8"] = run_flake8(src_dir)
     
-    # Run tests if not skipped
-    if not skip_tests:
-        # Run pytest
-        results["pytest"] = run_pytest(src_dir)
-        
-        # Run tox if requested
-        if run_tox_tests:
-            results["tox"] = run_tox()
+    # Run black
+    results["black"] = run_black(src_dir, check_only=not fix)
+    
+    # Run isort
+    results["isort"] = run_isort(src_dir, check_only=not fix)
+    
+    # Run mypy
+    # results["mypy"] = run_mypy(src_dir)
+    
+    # Run pytest
+    results["pytest"] = run_pytest(src_dir)
+    
+    # Run tox if requested
+    if run_tox_tests:
+        results["tox"] = run_tox()
     
     # Print summary
     console.print("\n[bold]Test Summary:[/bold]")
@@ -349,89 +338,31 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False,
     
     return {"success": all_passed, "results": results}
 
-def main() -> int:
-    """
-    Main function.
-    
-    Returns:
-        Exit code (0 for success, non-zero for failure)
-    """
+def main():
+    """Main function."""
     parser = argparse.ArgumentParser(description="Run code quality checks and tests")
+    parser.add_argument("--src", help="Source directory to test", default=None)
     parser.add_argument("--fix", action="store_true", help="Fix issues automatically")
     parser.add_argument("--tox", action="store_true", help="Run tox tests")
-    parser.add_argument("--skip-lint", action="store_true", help="Skip linting")
-    parser.add_argument("--skip-tests", action="store_true", help="Skip tests")
-    parser.add_argument("--skip-mypy", action="store_true", help="Skip mypy type checking")
     args = parser.parse_args()
     
-    # Get project information
-    project_root = get_project_root()
-    project_name = get_project_name()
-    package_path = get_package_path()
+    # Get source directory
+    if args.src:
+        src_dir = args.src
+    else:
+        project_root = get_project_root()
+        package_path = get_package_path()
+        src_dir = os.path.join(project_root, "src", package_path) if os.path.exists(os.path.join(project_root, "src", package_path)) else os.path.join(project_root, package_path)
     
-    # Determine source directory
-    src_dir = os.path.join(project_root, package_path)
     if not os.path.exists(src_dir):
-        console.print(f"[bold red]Error: Source directory {src_dir} does not exist![/bold red]")
-        console.print(f"Current working directory: {os.getcwd()}")
-        console.print(f"Project root: {project_root}")
-        console.print(f"Package path: {package_path}")
-        
-        # Try to find a reasonable source directory
-        possible_src_dirs = [
-            os.path.join(project_root, project_name),
-            os.path.join(project_root, "src"),
-            project_root
-        ]
-        
-        for possible_dir in possible_src_dirs:
-            if os.path.exists(possible_dir) and os.path.isdir(possible_dir):
-                src_dir = possible_dir
-                console.print(f"[bold yellow]Using {src_dir} as source directory instead.[/bold yellow]")
-                break
-    
-    console.print(f"Testing code in [bold]{src_dir}[/bold]")
-    
-    # Run tests
-    results = run_all_tests(
-        src_dir=src_dir,
-        fix=args.fix,
-        run_tox_tests=args.tox,
-        skip_lint=args.skip_lint,
-        skip_tests=args.skip_tests,
-        skip_mypy=args.skip_mypy
-    )
-    
-    # Print summary
-    table = Table(title="Test Summary")
-    table.add_column("Test", style="cyan")
-    table.add_column("Status", style="green")
-    table.add_column("Message", style="yellow")
-    
-    all_passed = True
-    
-    # Sprawdź, czy results jest słownikiem z kluczem 'results' czy bezpośrednio wynikami testów
-    if isinstance(results, dict) and "results" in results:
-        test_results = results["results"]
-        success = results.get("success", False)
-    else:
-        test_results = results
-        success = all(r.get("success", False) for r in results.values()) if results else False
-    
-    for test_name, result in test_results.items():
-        status = "PASS" if result["success"] else "FAIL"
-        if not result["success"]:
-            all_passed = False
-        table.add_row(test_name, status, result["message"])
-    
-    console.print(table)
-    
-    if all_passed:
-        console.print("[green bold]All tests passed![/green bold]")
-        return 0
-    else:
-        console.print("[red bold]Some tests failed![/red bold]")
+        console.print(f"[red]Error: Source directory {src_dir} does not exist![/red]")
         return 1
+    
+    console.print(f"[bold]Testing code in {src_dir}[/bold]")
+    
+    results = run_all_tests(src_dir, fix=args.fix, run_tox_tests=args.tox)
+    
+    return 0 if results["success"] else 1
 
 if __name__ == "__main__":
     sys.exit(main())

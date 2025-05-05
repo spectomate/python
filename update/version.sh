@@ -1,85 +1,151 @@
 #!/bin/bash
 set -e  # Stop script on first error
 
-# Ustaw zmienną TERM, jeśli nie jest ustawiona
-if [ -z "$TERM" ]; then
-    export TERM=xterm
-fi
+# Skip clear screen which requires TERM to be set
+echo "Starting version update process..."
 
-# Clear screen and show start information
-clear
-echo "Starting publication process..."
-
-# Check for environment variables to control script behavior
-SKIP_TESTS=${SKIP_TESTS:-0}
-SKIP_LINT=${SKIP_LINT:-0}
-SKIP_MYPY=${SKIP_MYPY:-0}
-SKIP_PUBLISH=${SKIP_PUBLISH:-0}
-SKIP_SUBMODULES=${SKIP_SUBMODULES:-0}
-VERBOSE=${VERBOSE:-0}
-
-# Display configuration if verbose
-if [ "$VERBOSE" = "1" ]; then
-    echo "Script configuration:"
-    echo "- Skip tests: $SKIP_TESTS"
-    echo "- Skip lint: $SKIP_LINT"
-    echo "- Skip mypy: $SKIP_MYPY"
-    echo "- Skip publish: $SKIP_PUBLISH"
-    echo "- Skip submodules check: $SKIP_SUBMODULES"
-    echo "- Verbose: $VERBOSE"
-fi
-
-# Get project configuration
-echo "Getting project configuration..."
-
-# Determine the current working directory and the location of the update scripts
-CURRENT_DIR=$(pwd)
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Add the update directory to Python path
-PROJECT_CONFIG=$(python3 -c "
+# Create a temporary Python script to get project configuration
+TMP_SCRIPT=$(mktemp)
+cat > "$TMP_SCRIPT" << 'EOF'
+#!/usr/bin/env python3
 import sys
 import os
-sys.path.append('$SCRIPT_DIR')
-try:
-    from env_manager import get_project_name, get_package_path, get_project_root
+import re
+from pathlib import Path
+
+def get_project_root():
+    """Returns the path to the project root directory."""
+    return Path(os.getcwd())
+
+def detect_project_name():
+    """Automatically detect project name from various sources."""
+    project_root = get_project_root()
+    candidates = []
     
-    # Ask user for project name if not defined
-    project_name = get_project_name(True)
-    package_path = get_package_path(True)
+    # Method 1: Check pyproject.toml
+    pyproject_path = project_root / "pyproject.toml"
+    if pyproject_path.exists():
+        try:
+            with open(pyproject_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                match = re.search(r'name\s*=\s*[\'"]([^\'"]+)[\'"]', content)
+                if match:
+                    candidates.append(match.group(1))
+        except:
+            pass
+    
+    # Method 2: Check setup.py
+    setup_path = project_root / "setup.py"
+    if setup_path.exists():
+        try:
+            with open(setup_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                match = re.search(r'name\s*=\s*[\'"]([^\'"]+)[\'"]', content)
+                if match:
+                    candidates.append(match.group(1))
+        except:
+            pass
+    
+    # Method 3: Check src directory for Python packages
+    src_path = project_root / "src"
+    if src_path.exists() and src_path.is_dir():
+        for item in src_path.iterdir():
+            if item.is_dir() and (item / "__init__.py").exists():
+                candidates.append(item.name)
+    
+    # Method 4: Use directory name as a fallback
+    candidates.append(project_root.name)
+    
+    # Remove duplicates while preserving order
+    unique_candidates = []
+    for candidate in candidates:
+        if candidate not in unique_candidates:
+            unique_candidates.append(candidate)
+    
+    return unique_candidates[0] if unique_candidates else ""
+
+def detect_package_path(project_name):
+    """Detect possible package path for a given project name."""
     project_root = get_project_root()
     
-    # Get version files - use only pyproject.toml which is usually accessible
+    # Method 1: src/project_name
+    src_path = project_root / "src" / project_name
+    if src_path.exists() and src_path.is_dir():
+        return f"src/{project_name}"
+    
+    # Method 2: project_name directly in root
+    root_path = project_root / project_name
+    if root_path.exists() and root_path.is_dir():
+        return project_name
+    
+    return f"src/{project_name}"  # Default fallback
+
+def find_version_files(project_name, package_path):
+    """Find files that contain version information with proper permissions."""
+    project_root = get_project_root()
     version_files = []
     
-    # Check pyproject.toml
-    pyproject_path = os.path.join(project_root, 'pyproject.toml')
-    if os.path.exists(pyproject_path) and os.access(pyproject_path, os.W_OK):
-        version_files.append(pyproject_path)
+    # Check common configuration files
+    config_files = [
+        project_root / "pyproject.toml",
+        project_root / "setup.py",
+        project_root / "setup.cfg",
+    ]
     
-    print(f\"PROJECT_NAME={project_name}\")
-    print(f\"PACKAGE_PATH={package_path}\")
-    print(f\"PROJECT_ROOT={project_root}\")
-    print(f\"VERSION_FILES={';'.join(version_files)}\")
-except Exception as e:
-    print(f\"PROJECT_NAME=unknown\")
-    print(f\"PACKAGE_PATH=unknown\")
-    print(f\"PROJECT_ROOT=$CURRENT_DIR\")
-    print(f\"VERSION_FILES=pyproject.toml\")
-    print(f\"# Error: {e}\", file=sys.stderr)
-")
+    for file_path in config_files:
+        if file_path.exists() and file_path.is_file() and os.access(file_path, os.R_OK | os.W_OK):
+            version_files.append(str(file_path))
+    
+    # Check main package __init__.py
+    if package_path:
+        init_file = project_root / package_path / "__init__.py"
+        if init_file.exists() and os.access(init_file, os.R_OK | os.W_OK):
+            version_files.append(str(init_file))
+    
+    return version_files
 
-# Process configuration
-eval "$PROJECT_CONFIG"
+def main():
+    try:
+        # Auto-detect project name
+        project_name = detect_project_name()
+        
+        # Auto-detect package path
+        package_path = detect_package_path(project_name)
+        
+        # Find version files with proper permissions
+        version_files = find_version_files(project_name, package_path)
+        
+        # Output results in a format that can be sourced by bash
+        print(f"PROJECT_NAME='{project_name}'")
+        print(f"PACKAGE_PATH='{package_path}'")
+        print(f"VERSION_FILES='{';'.join(version_files)}'")
+        
+    except Exception as e:
+        print(f"# Error: {e}", file=sys.stderr)
+        project_dir = os.path.basename(os.getcwd())
+        print(f"PROJECT_NAME='{project_dir}'")
+        print(f"PACKAGE_PATH='src/{project_dir}'")
+        print(f"VERSION_FILES=''")
+
+if __name__ == "__main__":
+    main()
+EOF
+
+# Run the temporary script to get project configuration
+echo "Detecting project configuration..."
+source <(python3 "$TMP_SCRIPT")
+rm "$TMP_SCRIPT"
+
 echo "Project name: $PROJECT_NAME"
 echo "Package path: $PACKAGE_PATH"
-echo "Project root: $PROJECT_ROOT"
-echo "Version files: $VERSION_FILES"
-
-# Change to project root directory if it's not the current directory
-if [ "$PROJECT_ROOT" != "$CURRENT_DIR" ]; then
-    echo "Changing to project root directory: $PROJECT_ROOT"
-    cd "$PROJECT_ROOT"
+echo "Files to update version in:"
+if [ -n "$VERSION_FILES" ]; then
+    IFS=';' read -ra FILES <<< "$VERSION_FILES"
+    for file in "${FILES[@]}"; do
+        echo "  - $file"
+    done
+else
+    echo "  No files found with proper permissions"
 fi
 
 # Check if virtualenv is already activated
@@ -119,14 +185,25 @@ pip install -e .
 echo "Updating version number..."
 if [ -n "$VERSION_FILES" ]; then
     IFS=';' read -ra FILES <<< "$VERSION_FILES"
+    updated_files=0
     for file in "${FILES[@]}"; do
         if [ -w "$file" ]; then
             echo "Updating version in file: $file"
-            python "$SCRIPT_DIR/src.py" -f "$file" --type patch || echo "Failed to update version in file $file"
+            if python update/src.py -f "$file" --type patch; then
+                updated_files=$((updated_files+1))
+            else
+                echo "Failed to update version in file $file"
+            fi
         else
             echo "Skipped file $file (no write permission)"
         fi
     done
+    
+    if [ $updated_files -eq 0 ]; then
+        echo "Warning: No files were updated. Check file permissions."
+    else
+        echo "Successfully updated version in $updated_files files."
+    fi
 else
     echo "No files to update version"
     echo "Using default version from CHANGELOG.md"
@@ -137,64 +214,33 @@ echo "Generating entry in CHANGELOG.md..."
 if [ -f "CHANGELOG.md" ] && [ ! -w "CHANGELOG.md" ]; then
     echo "Warning: No write permission to CHANGELOG.md file"
     echo "Creating temporary file CHANGELOG.md.new"
-    python "$SCRIPT_DIR/changelog.py" --output CHANGELOG.md.new || echo "Failed to generate entry in CHANGELOG.md"
+    python update/changelog.py --output CHANGELOG.md.new || echo "Failed to generate entry in CHANGELOG.md"
 else
-    python "$SCRIPT_DIR/changelog.py" || echo "Failed to generate entry in CHANGELOG.md"
+    python update/changelog.py || echo "Failed to generate entry in CHANGELOG.md"
 fi
 
-# Run code quality checks and tests if not skipped
-if [ "$SKIP_TESTS" != "1" ] || [ "$SKIP_LINT" != "1" ]; then
-    echo "Running code quality checks and tests..."
-    echo "This step ensures your code meets quality standards and all tests pass."
-    
-    # Prepare test command options
-    TEST_OPTIONS=""
-    if [ "$SKIP_LINT" = "1" ]; then
-        TEST_OPTIONS="$TEST_OPTIONS --no-lint"
-    else
-        TEST_OPTIONS="$TEST_OPTIONS --fix"
-    fi
-    
-    if [ "$SKIP_TESTS" = "1" ]; then
-        TEST_OPTIONS="$TEST_OPTIONS --no-test"
-    fi
-    
-    if [ "$SKIP_MYPY" = "1" ]; then
-        TEST_OPTIONS="$TEST_OPTIONS --no-mypy"
-    fi
-    
-    bash "$SCRIPT_DIR/test.sh" $TEST_OPTIONS
-    if [ $? -ne 0 ]; then
-        echo "Code quality checks or tests failed. Please fix the issues before publishing."
-        echo "You can run '$SCRIPT_DIR/test.sh --fix' to automatically fix some issues."
-        exit 1
-    fi
-    echo "All code quality checks and tests passed!"
-fi
+# Run code quality checks and tests
+echo "Running code quality checks and tests..."
+echo "This step ensures your code meets quality standards and all tests pass."
+bash update/test.sh --fix || {
+    echo "Code quality checks or tests failed. Please fix the issues before publishing."
+    echo "You can run './update/test.sh --fix' to automatically fix some issues."
+    exit 1
+}
+echo "All code quality checks and tests passed!"
 
-# Check and fix Git submodules if not skipped
-if [ "$SKIP_SUBMODULES" != "1" ]; then
-    echo "Checking and fixing Git submodules..."
-    bash "$SCRIPT_DIR/submodules.sh"
-    if [ $? -ne 0 ]; then
-        echo "Git submodule check failed. Please fix the issues before publishing."
-        exit 1
-    fi
-    echo "Git submodules check passed!"
-fi
+# Publish to GitHub
+echo "Push changes..."
+bash update/git.sh || {
+    echo "Failed to push changes to GitHub."
+    exit 1
+}
 
-# Publish to GitHub and PyPI if not skipped
-if [ "$SKIP_PUBLISH" != "1" ]; then
-    # Publish to GitHub
-    echo "Push changes..."
-    bash "$SCRIPT_DIR/git.sh"
+# Publish to PyPI
+echo "Publishing to PyPI..."
+bash update/pypi.sh || {
+    echo "Failed to publish to PyPI."
+    exit 1
+}
 
-    # Publish to PyPI
-    echo "Publishing to PyPI..."
-    bash "$SCRIPT_DIR/pypi.sh"
-    
-    echo "Publication process completed successfully!"
-else
-    echo "Skipping publication to GitHub and PyPI."
-    echo "Update process completed successfully!"
-fi
+echo "Version update process completed successfully!"
