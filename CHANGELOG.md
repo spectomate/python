@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.44] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+
 ## [0.1.43] - 2025-05-05
 
 ### Added
