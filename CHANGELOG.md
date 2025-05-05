@@ -2,6 +2,187 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.12] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in TODO.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/cli.py
+- Changes in spectomate/converters/__init__.py
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/external_converters.py
+- Changes in spectomate/converters/pip_to_conda.py
+- Changes in spectomate/converters/pip_to_pdm.py
+- Changes in spectomate/converters/pip_to_pipenv.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/converters/poetry_to_conda.py
+- Changes in spectomate/converters/poetry_to_pip.py
+- Changes in spectomate/core/__init__.py
+- Changes in spectomate/core/base_converter.py
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+- Changes in spectomate/schemas/__init__.py
+- Changes in spectomate/schemas/conda_schema.py
+- Changes in spectomate/schemas/pip_schema.py
+- Changes in spectomate/schemas/pipenv_schema.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in spectomate/tests/test_poetry_to_pip.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in .github/workflows/python-package.yml
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in spectomate/update_cli.py
+
+## [0.1.11] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in TODO.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/cli.py
+- Changes in spectomate/converters/__init__.py
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/external_converters.py
+- Changes in spectomate/converters/pip_to_conda.py
+- Changes in spectomate/converters/pip_to_pdm.py
+- Changes in spectomate/converters/pip_to_pipenv.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/converters/poetry_to_conda.py
+- Changes in spectomate/converters/poetry_to_pip.py
+- Changes in spectomate/core/__init__.py
+- Changes in spectomate/core/base_converter.py
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+- Changes in spectomate/schemas/__init__.py
+- Changes in spectomate/schemas/conda_schema.py
+- Changes in spectomate/schemas/pip_schema.py
+- Changes in spectomate/schemas/pipenv_schema.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in spectomate/tests/test_poetry_to_pip.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in .github/workflows/python-package.yml
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in spectomate/update_cli.py
+
+## [0.1.10] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in TODO.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/cli.py
+- Changes in spectomate/converters/__init__.py
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/external_converters.py
+- Changes in spectomate/converters/pip_to_conda.py
+- Changes in spectomate/converters/pip_to_pdm.py
+- Changes in spectomate/converters/pip_to_pipenv.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/converters/poetry_to_conda.py
+- Changes in spectomate/converters/poetry_to_pip.py
+- Changes in spectomate/core/__init__.py
+- Changes in spectomate/core/base_converter.py
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+- Changes in spectomate/schemas/__init__.py
+- Changes in spectomate/schemas/conda_schema.py
+- Changes in spectomate/schemas/pip_schema.py
+- Changes in spectomate/schemas/pipenv_schema.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in spectomate/tests/test_poetry_to_pip.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in .github/workflows/python-package.yml
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in spectomate/update_cli.py
+
+## [0.1.9] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in TODO.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/cli.py
+- Changes in spectomate/converters/__init__.py
+- Changes in spectomate/converters/conda_to_pip.py
+- Changes in spectomate/converters/external_converters.py
+- Changes in spectomate/converters/pip_to_conda.py
+- Changes in spectomate/converters/pip_to_pdm.py
+- Changes in spectomate/converters/pip_to_pipenv.py
+- Changes in spectomate/converters/pip_to_poetry.py
+- Changes in spectomate/converters/poetry_to_conda.py
+- Changes in spectomate/converters/poetry_to_pip.py
+- Changes in spectomate/core/__init__.py
+- Changes in spectomate/core/base_converter.py
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+- Changes in spectomate/schemas/__init__.py
+- Changes in spectomate/schemas/conda_schema.py
+- Changes in spectomate/schemas/pip_schema.py
+- Changes in spectomate/schemas/pipenv_schema.py
+- Changes in spectomate/schemas/poetry_schema.py
+- Changes in spectomate/tests/test_conda_to_pip.py
+- Changes in spectomate/tests/test_pip_to_conda.py
+- Changes in spectomate/tests/test_pip_to_poetry.py
+- Changes in spectomate/tests/test_poetry_to_pip.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in .github/workflows/python-package.yml
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in spectomate/update_cli.py
+
+## [0.1.8] - 2025-05-05
+
+### Added
+- Changes in TODO.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/cli.py
+- Changes in update/test.sh
+- Changes in update/test_code.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in .github/workflows/python-package.yml
+- Changes in docs/UPDATE.md
+- Changes in docs/pl/UPDATE.md
+- Changes in spectomate/update_cli.py
+
 ## [0.1.7] - 2025-05-04
 
 ### Added

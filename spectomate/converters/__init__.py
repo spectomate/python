@@ -2,10 +2,11 @@
 Moduł zawierający implementacje konwerterów dla różnych formatów pakietów.
 """
 
+from spectomate.converters.conda_to_pip import CondaToPipConverter
+
 # Importujemy wszystkie konwertery, aby zarejestrowały się w ConverterRegistry
 from spectomate.converters.pip_to_conda import PipToCondaConverter
 from spectomate.converters.pip_to_poetry import PipToPoetryConverter
-from spectomate.converters.conda_to_pip import CondaToPipConverter
 
 # Tymczasowo usunięto import nieistniejących konwerterów
 # from spectomate.converters.pip_to_pipenv import PipToPipenvConverter
@@ -17,8 +18,8 @@ from spectomate.converters.conda_to_pip import CondaToPipConverter
 try:
     from spectomate.converters.external_converters import (
         ExternalDephellConverter,
-        ExternalReq2TomlConverter,
         ExternalPoetry2CondaConverter,
+        ExternalReq2TomlConverter,
     )
 except ImportError:
     pass  # Zewnętrzne konwertery są opcjonalne

@@ -5,10 +5,10 @@ Narzędzie do konwersji między różnymi formatami zarządzania pakietami w Pyt
 """
 
 __version__ = "0.1.3"
-__author__ = 'Spectomate Team'
+__author__ = "Spectomate Team"
 
-from spectomate.core.registry import ConverterRegistry
 from spectomate.core.base_converter import BaseConverter
+from spectomate.core.registry import ConverterRegistry
 
 # Inicjalizacja rejestru konwerterów
 registry = ConverterRegistry()

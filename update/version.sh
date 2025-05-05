@@ -5,6 +5,23 @@ set -e  # Stop script on first error
 clear
 echo "Starting publication process..."
 
+# Check for environment variables to control script behavior
+SKIP_TESTS=${SKIP_TESTS:-0}
+SKIP_LINT=${SKIP_LINT:-0}
+SKIP_MYPY=${SKIP_MYPY:-0}
+SKIP_PUBLISH=${SKIP_PUBLISH:-0}
+VERBOSE=${VERBOSE:-0}
+
+# Display configuration if verbose
+if [ "$VERBOSE" = "1" ]; then
+    echo "Script configuration:"
+    echo "- Skip tests: $SKIP_TESTS"
+    echo "- Skip lint: $SKIP_LINT"
+    echo "- Skip mypy: $SKIP_MYPY"
+    echo "- Skip publish: $SKIP_PUBLISH"
+    echo "- Verbose: $VERBOSE"
+fi
+
 # Get project configuration
 echo "Getting project configuration..."
 PROJECT_CONFIG=$(python3 -c "
@@ -103,12 +120,48 @@ else
     python update/changelog.py || echo "Failed to generate entry in CHANGELOG.md"
 fi
 
-# Publish to GitHub
-echo "Push changes..."
-bash update/git.sh
+# Run code quality checks and tests if not skipped
+if [ "$SKIP_TESTS" != "1" ] || [ "$SKIP_LINT" != "1" ]; then
+    echo "Running code quality checks and tests..."
+    echo "This step ensures your code meets quality standards and all tests pass."
+    
+    # Prepare test command options
+    TEST_OPTIONS=""
+    if [ "$SKIP_LINT" = "1" ]; then
+        TEST_OPTIONS="$TEST_OPTIONS --no-lint"
+    else
+        TEST_OPTIONS="$TEST_OPTIONS --fix"
+    fi
+    
+    if [ "$SKIP_TESTS" = "1" ]; then
+        TEST_OPTIONS="$TEST_OPTIONS --no-test"
+    fi
+    
+    if [ "$SKIP_MYPY" = "1" ]; then
+        TEST_OPTIONS="$TEST_OPTIONS --skip-mypy"
+    fi
+    
+    bash update/test.sh $TEST_OPTIONS
+    if [ $? -ne 0 ]; then
+        echo "Code quality checks or tests failed. Please fix the issues before publishing."
+        echo "You can run './update/test.sh --fix' to automatically fix some issues."
+        exit 1
+    fi
+    echo "All code quality checks and tests passed!"
+fi
 
-# Publish to PyPI
-echo "Publishing to PyPI..."
-bash update/pypi.sh
+# Publish to GitHub and PyPI if not skipped
+if [ "$SKIP_PUBLISH" != "1" ]; then
+    # Publish to GitHub
+    echo "Push changes..."
+    bash update/git.sh
 
-echo "Publication process completed successfully!"
+    # Publish to PyPI
+    echo "Publishing to PyPI..."
+    bash update/pypi.sh
+    
+    echo "Publication process completed successfully!"
+else
+    echo "Skipping publication to GitHub and PyPI."
+    echo "Update process completed successfully!"
+fi
