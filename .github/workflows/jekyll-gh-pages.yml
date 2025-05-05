@@ -5,13 +5,11 @@ on:
     branches: ["main", "master"]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -36,11 +34,16 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
-          destination: ./_site
+          destination: ./
 
-      - name: Upload artifact
-        id: upload-pages-artifact  # Added an ID for clarity
-        uses: actions/upload-pages-artifact@v1
+      - name: Debug Build Directory
+        run: ls -la ./
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: jekyll-build
+          path: ./
 
   deploy:
     environment:
