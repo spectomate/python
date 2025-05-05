@@ -4,7 +4,7 @@ Spectomate - modularny konwerter pakietów Python
 Narzędzie do konwersji między różnymi formatami zarządzania pakietami w Pythonie.
 """
 
-__version__ = "0.1.24"
+__version__ = "0.1.25"
 __author__ = "Tom Sapletta"
 
 from spectomate.core.base_converter import BaseConverter
