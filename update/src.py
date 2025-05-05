@@ -7,6 +7,10 @@ import re
 import argparse
 import os
 import sys
+import json
+import subprocess
+from urllib.request import urlopen
+from urllib.error import HTTPError
 
 
 def get_version_from_file(file_path):
@@ -35,6 +39,61 @@ def get_version_from_file(file_path):
         print(f"Error reading {file_path}: {e}")
 
     return None, None
+
+
+def get_package_name_from_pyproject(file_path):
+    """Extract the package name from pyproject.toml."""
+    try:
+        if not file_path.endswith('pyproject.toml'):
+            # Try to find pyproject.toml in the same directory
+            dir_path = os.path.dirname(file_path)
+            pyproject_path = os.path.join(dir_path, 'pyproject.toml')
+            if not os.path.exists(pyproject_path):
+                # Try parent directory
+                parent_dir = os.path.dirname(dir_path)
+                pyproject_path = os.path.join(parent_dir, 'pyproject.toml')
+                if not os.path.exists(pyproject_path):
+                    return None
+        else:
+            pyproject_path = file_path
+            
+        with open(pyproject_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+            # Look for name = "package_name" in [project] section
+            match = re.search(r'\[project\][^\[]*name\s*=\s*[\'"]([^\'"]+)[\'"]', content, re.DOTALL)
+            if match:
+                return match.group(1)
+            return None
+    except Exception as e:
+        print(f"Error reading package name from pyproject.toml: {e}")
+        return None
+
+
+def check_pypi_version(package_name):
+    """
+    Check if a package exists on PyPI and return its latest version.
+    
+    Args:
+        package_name: The name of the package to check
+        
+    Returns:
+        The latest version on PyPI or None if the package doesn't exist
+    """
+    try:
+        url = f"https://pypi.org/pypi/{package_name}/json"
+        with urlopen(url) as response:
+            data = json.loads(response.read().decode())
+            return data.get('info', {}).get('version')
+    except HTTPError as e:
+        if e.code == 404:
+            # Package doesn't exist on PyPI
+            return None
+        else:
+            print(f"Error checking PyPI: {e}")
+            return None
+    except Exception as e:
+        print(f"Error checking PyPI: {e}")
+        return None
 
 
 def increment_version(current_version, increment_type="patch"):
@@ -110,6 +169,68 @@ def set_specific_version(new_version):
     return new_version
 
 
+def ensure_version_is_unique(package_name, target_version):
+    """
+    Ensure the target version is not already on PyPI.
+    If it is, increment the patch version until we find a unique one.
+    
+    Args:
+        package_name: The name of the package
+        target_version: The desired version
+        
+    Returns:
+        A unique version that doesn't exist on PyPI
+    """
+    if not package_name:
+        print("Warning: Package name not found, cannot check PyPI for version conflicts")
+        return target_version
+        
+    pypi_version = check_pypi_version(package_name)
+    if not pypi_version:
+        # Package doesn't exist on PyPI yet
+        return target_version
+        
+    # Check if target version already exists on PyPI
+    try:
+        # Try to get info about the specific version
+        url = f"https://pypi.org/pypi/{package_name}/{target_version}/json"
+        try:
+            with urlopen(url) as response:
+                # If this succeeds, the version exists
+                print(f"Warning: Version {target_version} already exists on PyPI")
+                # Increment patch version until we find a unique one
+                new_version = target_version
+                while True:
+                    new_version = increment_version(new_version, "patch")
+                    check_url = f"https://pypi.org/pypi/{package_name}/{new_version}/json"
+                    try:
+                        with urlopen(check_url) as _:
+                            # This version also exists, try the next one
+                            print(f"Version {new_version} also exists on PyPI, incrementing...")
+                            continue
+                    except HTTPError as e:
+                        if e.code == 404:
+                            # This version doesn't exist, we can use it
+                            print(f"Using new version: {new_version}")
+                            return new_version
+                        else:
+                            # Some other error occurred
+                            print(f"Error checking PyPI: {e}")
+                            # Fall back to the original target version
+                            return target_version
+        except HTTPError as e:
+            if e.code == 404:
+                # Version doesn't exist, we can use it
+                return target_version
+            else:
+                # Some other error occurred
+                print(f"Error checking PyPI: {e}")
+                return target_version
+    except Exception as e:
+        print(f"Error checking PyPI: {e}")
+        return target_version
+
+
 def update_version_in_file(file_path, new_version=None, increment_type="patch", backup=True):
     """
     Update the version in a Python file.
@@ -134,6 +255,11 @@ def update_version_in_file(file_path, new_version=None, increment_type="patch", 
             target_version = set_specific_version(new_version)
         else:
             target_version = increment_version(current_version, increment_type)
+            
+        # Get package name and ensure version is unique
+        package_name = get_package_name_from_pyproject(file_path)
+        if package_name:
+            target_version = ensure_version_is_unique(package_name, target_version)
 
         # Create backup if requested
         if backup:
@@ -146,7 +272,8 @@ def update_version_in_file(file_path, new_version=None, increment_type="patch", 
         patterns = [
             (r'(__version__\s*=\s*version\s*=\s*)[\'"]([^\'"]+)[\'"]', rf'\g<1>"{target_version}"'),
             (r'(__version__\s*=\s*)[\'"]([^\'"]+)[\'"]', rf'\g<1>"{target_version}"'),
-            (r'(version\s*=\s*)[\'"]([^\'"]+)[\'"]', rf'\g<1>"{target_version}"')
+            (r'(version\s*=\s*)[\'"]([^\'"]+)[\'"]', rf'\g<1>"{target_version}"'),
+            (r'(python_version\s*=\s*)[\'"]([^\'"]+)[\'"]', rf'\g<1>"{target_version}"')
         ]
 
         new_content = content
@@ -200,11 +327,10 @@ def main():
         backup=not args.no_backup
     )
 
+    print(message)
     if success:
-        print(f"✅ {message}")
         return 0
     else:
-        print(f"❌ {message}")
         return 1
 
 
