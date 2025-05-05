@@ -424,7 +424,7 @@ def run_update_script(
         return 1
 
 
-@click.command()
+@click.command(name="update")
 @click.option("--no-test", is_flag=True, help="Pomiń uruchamianie testów")
 @click.option("--no-lint", is_flag=True, help="Pomiń sprawdzanie linterem")
 @click.option("--no-mypy", is_flag=True, help="Pomiń sprawdzanie typów mypy")

@@ -132,5 +132,10 @@ cli.add_command(git_cli)
 cli.add_command(format_cli)
 
 
+def main():
+    """Entry point for the CLI."""
+    return cli()
+
+
 if __name__ == "__main__":
-    cli()
+    sys.exit(main())
