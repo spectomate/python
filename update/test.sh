@@ -108,11 +108,11 @@ pip install -e .
 TEST_CODE_ARGS=""
 
 if [ "$SKIP_TESTS" -eq 1 ]; then
-    TEST_CODE_ARGS="$TEST_CODE_ARGS --skip-tests"
+    TEST_CODE_ARGS="$TEST_CODE_ARGS --no-tests"
 fi
 
 if [ "$SKIP_LINT" -eq 1 ]; then
-    TEST_CODE_ARGS="$TEST_CODE_ARGS --skip-lint"
+    TEST_CODE_ARGS="$TEST_CODE_ARGS --no-lint"
 fi
 
 if [ "$SKIP_MYPY" -eq 1 ]; then
@@ -122,6 +122,22 @@ fi
 if [ "$FIX_MODE" -eq 1 ]; then
     TEST_CODE_ARGS="$TEST_CODE_ARGS --fix"
 fi
+
+# Add support for alternative syntax
+# Usage example: ./test.sh no-lint no-test no-mypy
+for arg in "$@"; do
+    case $arg in
+        "no-lint")
+            TEST_CODE_ARGS="$TEST_CODE_ARGS --no-lint"
+            ;;
+        "no-test")
+            TEST_CODE_ARGS="$TEST_CODE_ARGS --no-tests"
+            ;;
+        "no-mypy")
+            TEST_CODE_ARGS="$TEST_CODE_ARGS --no-mypy"
+            ;;
+    esac
+done
 
 # Run the tests
 echo "Running code quality checks and tests..."
