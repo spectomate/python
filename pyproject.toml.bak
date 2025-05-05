@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spectomate"
-version = "0.1.33"
+version = "0.1.36"
 description = "Modularny konwerter formatów pakietów Python"
 readme = "README.md"
 authors = [
@@ -57,7 +57,7 @@ dev = [
 spectomate = "spectomate.cli:main"
 
 [tool.setuptools]
-packages = ["spectomate"]
+packages = ["spectomate", "spectomate.core", "spectomate.converters", "spectomate.schemas"]
 package-dir = {"" = "."}
 exclude-package-data = {"*" = ["update/*"]}
 
@@ -70,7 +70,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.1.33"
+python_version = "0.1.36"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

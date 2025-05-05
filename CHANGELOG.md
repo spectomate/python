@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.37] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
+## [0.1.36] - 2025-05-05
+
+### Added
+- Changes in CHANGELOG.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
+## [0.1.35] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
 ## [0.1.34] - 2025-05-05
 
 ### Added
