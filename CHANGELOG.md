@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.39] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/cli.py
+- Changes in spectomate/update_cli.py
+- Changes in update/version.sh
+
+### Changed
+- Changes in scripts/fix_submodules.py
+- Changes in spectomate/git_cli.py
+- Changes in update/submodules.sh
+
 ## [0.1.38] - 2025-05-05
 
 ### Added

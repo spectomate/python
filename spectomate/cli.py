@@ -10,6 +10,7 @@ import click
 
 from spectomate import __version__, registry
 from spectomate.core.utils import get_available_formats
+from spectomate.git_cli import git_cli
 from spectomate.mypy_cli import mypy_cli
 from spectomate.test_cli import test_cli
 from spectomate.update_cli import update_command
@@ -142,6 +143,9 @@ cli.add_command(mypy_cli, name="mypy")
 
 # Rejestracja komendy test
 cli.add_command(test_cli, name="test")
+
+# Rejestracja komendy git
+cli.add_command(git_cli, name="git")
 
 
 def main(args: Optional[List[str]] = None) -> int:

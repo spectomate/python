@@ -12,6 +12,7 @@ def run_update_script(
     skip_lint: bool = False,
     skip_mypy: bool = False,
     skip_publish: bool = False,
+    skip_submodules: bool = False,
     verbose: bool = False,
 ) -> int:
     """
@@ -22,6 +23,7 @@ def run_update_script(
         skip_lint: Czy pominąć sprawdzanie linterem
         skip_mypy: Czy pominąć sprawdzanie typów mypy
         skip_publish: Czy pominąć publikację do PyPI i GitHub
+        skip_submodules: Czy pominąć sprawdzanie i naprawianie submodułów Git
         verbose: Czy wyświetlać szczegółowe informacje
 
     Returns:
@@ -75,6 +77,9 @@ def run_update_script(
     if skip_publish:
         env["SKIP_PUBLISH"] = "1"
 
+    if skip_submodules:
+        env["SKIP_SUBMODULES"] = "1"
+
     if verbose:
         env["VERBOSE"] = "1"
 
@@ -96,9 +101,19 @@ def run_update_script(
 @click.option("--no-lint", is_flag=True, help="Pomiń sprawdzanie linterem")
 @click.option("--no-mypy", is_flag=True, help="Pomiń sprawdzanie typów mypy")
 @click.option("--no-publish", is_flag=True, help="Pomiń publikację do PyPI i GitHub")
+@click.option(
+    "--no-submodules",
+    is_flag=True,
+    help="Pomiń sprawdzanie i naprawianie submodułów Git",
+)
 @click.option("--verbose", is_flag=True, help="Wyświetlaj szczegółowe informacje")
 def update_command(
-    no_test: bool, no_lint: bool, no_mypy: bool, no_publish: bool, verbose: bool
+    no_test: bool,
+    no_lint: bool,
+    no_mypy: bool,
+    no_publish: bool,
+    no_submodules: bool,
+    verbose: bool,
 ) -> None:
     """Aktualizuje wersję pakietu i opcjonalnie publikuje go.
 
@@ -111,6 +126,7 @@ def update_command(
         spectomate update --no-mypy        # Aktualizacja bez sprawdzania typów mypy
         spectomate update --no-test        # Aktualizacja bez uruchamiania testów
         spectomate update --no-lint        # Aktualizacja bez sprawdzania linterem
+        spectomate update --no-submodules  # Aktualizacja bez sprawdzania submodułów Git
         spectomate update --verbose        # Aktualizacja z wyświetlaniem szczegółowych informacji
     """
     # Pobierz nazwę projektu z bieżącego katalogu
@@ -126,6 +142,7 @@ def update_command(
         skip_lint=no_lint,
         skip_mypy=no_mypy,
         skip_publish=no_publish,
+        skip_submodules=no_submodules,
         verbose=verbose,
     )
 

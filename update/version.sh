@@ -15,6 +15,7 @@ SKIP_TESTS=${SKIP_TESTS:-0}
 SKIP_LINT=${SKIP_LINT:-0}
 SKIP_MYPY=${SKIP_MYPY:-0}
 SKIP_PUBLISH=${SKIP_PUBLISH:-0}
+SKIP_SUBMODULES=${SKIP_SUBMODULES:-0}
 VERBOSE=${VERBOSE:-0}
 
 # Display configuration if verbose
@@ -24,6 +25,7 @@ if [ "$VERBOSE" = "1" ]; then
     echo "- Skip lint: $SKIP_LINT"
     echo "- Skip mypy: $SKIP_MYPY"
     echo "- Skip publish: $SKIP_PUBLISH"
+    echo "- Skip submodules check: $SKIP_SUBMODULES"
     echo "- Verbose: $VERBOSE"
 fi
 
@@ -168,6 +170,17 @@ if [ "$SKIP_TESTS" != "1" ] || [ "$SKIP_LINT" != "1" ]; then
         exit 1
     fi
     echo "All code quality checks and tests passed!"
+fi
+
+# Check and fix Git submodules if not skipped
+if [ "$SKIP_SUBMODULES" != "1" ]; then
+    echo "Checking and fixing Git submodules..."
+    bash "$SCRIPT_DIR/submodules.sh"
+    if [ $? -ne 0 ]; then
+        echo "Git submodule check failed. Please fix the issues before publishing."
+        exit 1
+    fi
+    echo "Git submodules check passed!"
 fi
 
 # Publish to GitHub and PyPI if not skipped
