@@ -20,6 +20,10 @@ Spectomate is a tool for converting projects between different Python package ma
    - pip (requirements.txt)
    - conda (environment.yml)
    - poetry (pyproject.toml)
+5. **Project management tools**:
+   - Package version updating
+   - Testing and linting automation
+   - Publication to PyPI
 
 ## Installation
 
@@ -31,6 +35,8 @@ pip install spectomate
 ## How to Use Spectomate:
 
 ### Command Line Interface (CLI)
+
+#### Format Conversion
 
 ```bash
 # Display available converters
@@ -44,6 +50,37 @@ spectomate -s conda -t pip -i environment.yml -o requirements.txt
 
 # Convert from pip to poetry
 spectomate -s pip -t poetry -i requirements.txt -o pyproject.toml --project-name "my-project" --version "0.1.0"
+```
+
+#### Package Update and Management
+
+```bash
+# Full package update with publication
+spectomate update
+
+# Interactive update with project analysis
+spectomate update --interactive
+
+# Only analyze project without updating
+spectomate update --analyze-only
+
+# Update without publishing to PyPI
+spectomate update --no-publish
+
+# Update without type checking
+spectomate update --no-mypy
+
+# Update without running tests
+spectomate update --no-test
+
+# Update without linting
+spectomate update --no-lint
+
+# Update without checking Git submodules
+spectomate update --no-submodules
+
+# Update with verbose output
+spectomate update --verbose
 ```
 
 ### Programmatic Usage
