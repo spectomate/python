@@ -2,8 +2,8 @@
 title: Spectomate
 tagline: Python Package Management Format Converter
 description: A tool for converting projects between different Python package management formats (pip, conda, poetry)
-url: https://spectomate.github.io
-baseurl: /python
+url: https://www.spectomate.com
+baseurl: /
 
 # SEO settings
 author:
