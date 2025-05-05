@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.48] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+
+### Changed
+- Changes in .github/workflows/github-pages.yml
+- Changes in docs/_config.yml
+
 ## [0.1.47] - 2025-05-05
 
 ### Added
