@@ -1,3 +1,11 @@
+---
+title: "Spectomate Testing Guide"
+description: "Comprehensive guide to testing tools and workflows for the Spectomate package"
+author: "Spectomate Team"
+keywords: "spectomate, testing, python, pytest, code quality, CI/CD, GitHub Actions, unit testing"
+lang: "en"
+---
+
 # Spectomate Testing Guide
 
 This document describes the testing tools and workflows available in the Spectomate package.

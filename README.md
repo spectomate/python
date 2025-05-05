@@ -1,3 +1,12 @@
+---
+title: "Spectomate - Python Package Management Format Converter"
+description: "A tool for converting projects between different Python package management formats (pip, conda, poetry)"
+author: "Spectomate Team"
+keywords: "python, package management, pip, conda, poetry, converter, requirements.txt, environment.yml, pyproject.toml"
+lang: "en"
+image: "https://github.com/spectomate/python/raw/main/docs/diagrams/logo.png"
+---
+
 # Spectomate
 
 Spectomate is a tool for converting projects between different Python package management formats (pip, conda, poetry).

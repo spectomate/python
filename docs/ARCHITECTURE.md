@@ -1,3 +1,11 @@
+---
+title: "Spectomate Architecture"
+description: "Detailed overview of the Spectomate system architecture and component design"
+author: "Spectomate Team"
+keywords: "spectomate, architecture, python, package management, converter, modular design, BaseConverter"
+lang: "en"
+---
+
 # Spectomate Architecture
 
 ## Overview

@@ -1,3 +1,11 @@
+---
+title: "Spectomate Data Schemas"
+description: "Documentation of data schemas used in Spectomate for different package management formats"
+author: "Spectomate Team"
+keywords: "spectomate, data schemas, python, package management, pip, conda, poetry, requirements.txt, environment.yml, pyproject.toml"
+lang: "en"
+---
+
 # Data Schemas in Spectomate
 
 ## Introduction

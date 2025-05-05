@@ -1,3 +1,11 @@
+---
+title: "Spectomate Documentation"
+description: "Comprehensive documentation for the Spectomate Python package format converter"
+author: "Spectomate Team"
+keywords: "spectomate, documentation, python, package management, converter, architecture, diagrams"
+lang: "en"
+---
+
 # Spectomate Documentation
 
 This directory contains the documentation for the Spectomate project.

@@ -1,3 +1,11 @@
+---
+title: "Spectomate Converters"
+description: "Documentation of available converters in Spectomate and how to create custom ones"
+author: "Spectomate Team"
+keywords: "spectomate, converters, python, package management, pip, conda, poetry, custom converters"
+lang: "en"
+---
+
 # Converters in Spectomate
 
 ## Introduction
