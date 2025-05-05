@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.13] - 2025-05-05
+
+### Added
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+
 ## [0.1.12] - 2025-05-05
 
 ### Added
