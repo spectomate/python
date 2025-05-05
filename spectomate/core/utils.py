@@ -13,16 +13,28 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 # from spectomate.core.registry import ConverterRegistry
 
 
-def get_available_formats() -> Set[str]:
+def get_available_formats(format_type: Optional[str] = None) -> Set[str]:
     """
     Zwraca zbiór wszystkich dostępnych formatów.
+
+    Args:
+        format_type: Optional filter for format type ('input', 'output', or None for all)
 
     Returns:
         Zbiór nazw formatów
     """
     from spectomate.core.registry import ConverterRegistry
 
-    return ConverterRegistry.get_all_formats()
+    if format_type is None:
+        return ConverterRegistry.get_all_formats()
+    elif format_type == "input":
+        return ConverterRegistry.get_input_formats()
+    elif format_type == "output":
+        return ConverterRegistry.get_output_formats()
+    else:
+        raise ValueError(
+            f"Unknown format type: {format_type}. Use 'input', 'output', or None."
+        )
 
 
 def get_default_output_file(source_file: Path, target_format: str) -> Path:
@@ -132,3 +144,38 @@ def is_external_tool_available(tool_name: str) -> bool:
         return True
     except FileNotFoundError:
         return False
+
+
+def get_project_root() -> Path:
+    """
+    Find the root directory of the project.
+
+    The function looks for common project files like pyproject.toml, setup.py,
+    or .git directory to determine the project root.
+
+    Returns:
+        Path to the project root directory
+    """
+    # Start from the current working directory
+    current_dir = Path.cwd()
+
+    # Go up the directory tree until we find a project root indicator
+    while current_dir != current_dir.parent:
+        # Check for common project root indicators
+        if any(
+            (current_dir / marker).exists()
+            for marker in [
+                "pyproject.toml",
+                "setup.py",
+                "setup.cfg",
+                ".git",
+                "requirements.txt",
+            ]
+        ):
+            return current_dir
+
+        # Move up one directory
+        current_dir = current_dir.parent
+
+    # If we can't find a project root, return the current directory
+    return Path.cwd()

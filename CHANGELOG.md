@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.41] - 2025-05-05
+
+### Added
+- Changes in .github/workflows/python-package.yml
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+- Changes in spectomate/core/registry.py
+- Changes in spectomate/core/utils.py
+
 ## [0.1.40] - 2025-05-05
 
 ### Added
