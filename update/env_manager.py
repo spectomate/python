@@ -310,6 +310,7 @@ def get_package_path(prompt: bool = True) -> str:
     """
     Gets the path to the package directory.
     If the path is not defined, tries to detect it automatically.
+    Allows for flexible project layouts: src/<project>, <project>, or any dir with __init__.py.
     
     Args:
         prompt: Whether to ask the user if the path is not defined.
@@ -317,31 +318,37 @@ def get_package_path(prompt: bool = True) -> str:
     Returns:
         Path to the package directory (relative to the project root directory).
     """
-    # First check in .env
     env_vars = load_env_file()
     if "PACKAGE_PATH" in env_vars and env_vars["PACKAGE_PATH"]:
         return env_vars["PACKAGE_PATH"]
-    
-    # If not in .env, try to detect automatically
     project_name = get_project_name(False)
-    
-    if project_name:
-        candidates = detect_package_paths(project_name)
-        
-        if candidates:
-            package_path = candidates[0]  # Use the most likely candidate
-            
-            # Save to .env
-            env_vars["PACKAGE_PATH"] = package_path
-            save_env_file(env_vars)
-            
-            return package_path
-    
-    # If still not found, ask the user
+    candidates = []
+    project_root = get_project_root()
+    # src/project_name
+    src_path = project_root / "src" / project_name
+    if src_path.exists() and src_path.is_dir():
+        candidates.append(f"src/{project_name}")
+    # project_name directly in root
+    root_path = project_root / project_name
+    if root_path.exists() and root_path.is_dir():
+        candidates.append(project_name)
+    # any dir with __init__.py
+    for item in project_root.iterdir():
+        if item.is_dir() and not item.name.startswith('.') and (item / "__init__.py").exists():
+            candidates.append(item.name)
+    # fallback: src/<any package>
+    src_dir = project_root / "src"
+    if src_dir.exists() and src_dir.is_dir():
+        for item in src_dir.iterdir():
+            if item.is_dir() and (item / "__init__.py").exists():
+                candidates.append(f"src/{item.name}")
+    if candidates:
+        package_path = candidates[0]
+        env_vars["PACKAGE_PATH"] = package_path
+        save_env_file(env_vars)
+        return package_path
     if prompt:
         return get_env_var("PACKAGE_PATH", project_name if project_name else "", True)
-    
-    # If all else fails, return the project name or empty string
     return project_name if project_name else ""
 
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.64] - 2025-05-11
+
+### Added
+- Changes in README.md
+- Changes in pyproject.toml
+- Changes in pyproject.toml.bak
+- Changes in requirements.txt
+- Changes in spectomate/__init__.py
+- Changes in spectomate/__init__.py.bak
+- Changes in update/env_manager.py
+- Changes in update/test_code.py
+
 ## [0.1.63] - 2025-05-05
 
 ### Added

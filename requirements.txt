@@ -9,3 +9,4 @@ mypy>=0.950
 flake8>=4.0.0
 types-toml>=0.10.0
 types-PyYAML>=6.0.0
+rich

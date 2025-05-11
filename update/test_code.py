@@ -20,11 +20,46 @@ try:
 except ImportError:
     print("Cannot import env_manager module. Using default values.")
     def get_project_name():
-        return "twinizer"
+        # Try to detect from pyproject.toml or setup.py
+        import re
+        from pathlib import Path
+        project_root = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        pyproject = project_root / "pyproject.toml"
+        if pyproject.exists():
+            content = pyproject.read_text(encoding="utf-8")
+            m = re.search(r'name\s*=\s*[\'"]([^\'"]+)[\'"]', content)
+            if m:
+                return m.group(1)
+        setup = project_root / "setup.py"
+        if setup.exists():
+            content = setup.read_text(encoding="utf-8")
+            m = re.search(r'name\s*=\s*[\'"]([^\'"]+)[\'"]', content)
+            if m:
+                return m.group(1)
+        return project_root.name
     def get_package_path():
-        return "twinizer"
+        # Try src/<project>, <project>, any dir with __init__.py
+        from pathlib import Path
+        project_root = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        project_name = get_project_name()
+        src_path = project_root / "src" / project_name
+        if src_path.exists() and src_path.is_dir():
+            return f"src/{project_name}"
+        root_path = project_root / project_name
+        if root_path.exists() and root_path.is_dir():
+            return project_name
+        for item in project_root.iterdir():
+            if item.is_dir() and not item.name.startswith('.') and (item / "__init__.py").exists():
+                return item.name
+        src_dir = project_root / "src"
+        if src_dir.exists() and src_dir.is_dir():
+            for item in src_dir.iterdir():
+                if item.is_dir() and (item / "__init__.py").exists():
+                    return f"src/{item.name}"
+        return project_name
     def get_project_root():
-        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        from pathlib import Path
+        return Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Initialize rich console
 console = Console()
@@ -338,6 +373,50 @@ def run_all_tests(src_dir: str, fix: bool = False, run_tox_tests: bool = False) 
     
     return {"success": all_passed, "results": results}
 
+def autodetect_package_dir():
+    from pathlib import Path
+    root = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_name = get_project_name()
+    candidates = []
+    src_candidate = root / "src" / project_name
+    if src_candidate.exists() and src_candidate.is_dir():
+        candidates.append(str(src_candidate))
+    root_candidate = root / project_name
+    if root_candidate.exists() and root_candidate.is_dir():
+        candidates.append(str(root_candidate))
+    for item in root.iterdir():
+        if item.is_dir() and not item.name.startswith('.') and (item / "__init__.py").exists():
+            candidates.append(str(item))
+    # fallback: first package in src/
+    src_dir = root / "src"
+    if src_dir.exists() and src_dir.is_dir():
+        for item in src_dir.iterdir():
+            if item.is_dir() and (item / "__init__.py").exists():
+                candidates.append(str(item))
+    return candidates
+
+def run_code_quality_checks():
+    results = {}
+    results["flake8"] = run_flake8(".")
+    results["black"] = run_black(".", check_only=True)
+    results["isort"] = run_isort(".", check_only=True)
+    console.print("\n[bold]Test Summary:[/bold]")
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Test")
+    table.add_column("Status")
+    table.add_column("Message")
+    all_passed = True
+    for name, result in results.items():
+        status = "[green]PASS[/green]" if result["success"] else "[red]FAIL[/red]"
+        if not result["success"]:
+            all_passed = False
+        table.add_row(name, status, result["message"])
+    console.print(table)
+    if all_passed:
+        console.print("[green bold]All tests passed![/green bold]")
+    else:
+        console.print("[red bold]Some tests failed![/red bold]")
+
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(description="Run code quality checks and tests")
@@ -347,12 +426,12 @@ def main():
     args = parser.parse_args()
     
     # Get source directory
-    if args.src:
-        src_dir = args.src
-    else:
-        project_root = get_project_root()
-        package_path = get_package_path()
-        src_dir = os.path.join(project_root, "src", package_path) if os.path.exists(os.path.join(project_root, "src", package_path)) else os.path.join(project_root, package_path)
+    package_dirs = autodetect_package_dir()
+    if not package_dirs:
+        console.print("Warning: No package directory found. Skipping import-based tests.")
+        run_code_quality_checks()
+        sys.exit(0)
+    src_dir = package_dirs[0]
     
     if not os.path.exists(src_dir):
         console.print(f"[red]Error: Source directory {src_dir} does not exist![/red]")

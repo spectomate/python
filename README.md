@@ -159,4 +159,5 @@ Detailed information on creating custom converters can be found in the [converte
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the [Apache 2 License](LICENSE) 
+
